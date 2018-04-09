@@ -14,7 +14,7 @@ public class GameCanBeCreated {
 
         GameCreated gameCreated = new GameCreated(id, name);
 
-        assertThat(game.uncomittedChanges()).contains(gameCreated);
+        assertThat(game.changes()).contains(gameCreated);
     }
 
     private UUID id = randomUUID();

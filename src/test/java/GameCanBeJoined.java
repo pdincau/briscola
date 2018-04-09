@@ -17,7 +17,7 @@ public class GameCanBeJoined {
         game.addPlayer(playerName + "3");
         game.addPlayer(playerName + "4");
 
-        assertThat(game.uncomittedChanges())
+        assertThat(game.changes())
                 .filteredOn("class", PlayerJoined.class)
                 .extracting("name")
                 .contains(playerName + "1")

@@ -4,18 +4,18 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-public class InMemoryAllEvents implements AllEvents {
+public class InMemoryEventStream implements EventStore {
 
     private final EventPublisher publisher;
 
     private final Map<UUID, List<EventDescriptor>> store = new HashMap<>();
 
-    public InMemoryAllEvents(EventPublisher publisher) {
+    public InMemoryEventStream(EventPublisher publisher) {
         this.publisher = publisher;
     }
 
     @Override
-    public void addFor(UUID aggregateId, List<Event> events, int expectedVersion) {
+    public void appendToStream(UUID aggregateId, List<Event> events, int expectedVersion) {
         List<EventDescriptor> eventDescriptors = store.get(aggregateId);
         if (aggregateNotFound(eventDescriptors)) {
             eventDescriptors = new ArrayList<>();
@@ -35,7 +35,7 @@ public class InMemoryAllEvents implements AllEvents {
     }
 
     @Override
-    public List<Event> ofAggregateWithId(UUID aggregateId) {
+    public List<Event> loadEventStream(UUID aggregateId) {
         List<EventDescriptor> eventDescriptors = store.get(aggregateId);
 
         if (aggregateNotFound(eventDescriptors)) {

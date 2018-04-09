@@ -1,4 +1,5 @@
 import commands.CreateGame;
+import events.Event;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,6 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
@@ -15,13 +17,13 @@ import static org.mockito.Mockito.verify;
 public class OnCreateGameCommand {
 
     @Mock
-    private AggregateRootRepository<Game> repository;
+    private EventStore eventStreams;
 
     private BriscolaCommandHandlers handler;
 
     @Before
     public void setup() {
-        handler = new BriscolaCommandHandlers(repository);
+        handler = new BriscolaCommandHandlers(eventStreams);
     }
 
     @Test
@@ -30,7 +32,7 @@ public class OnCreateGameCommand {
 
         handler.handle(command);
 
-        verify(repository).add(isA(Game.class), eq(-1));
+        verify(eventStreams).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(-1));
     }
 
     private UUID commandId = randomUUID();

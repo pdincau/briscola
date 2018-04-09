@@ -1,4 +1,6 @@
 import commands.AddPlayer;
+import events.Event;
+import events.GameCreated;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -7,7 +9,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.UUID;
 
+import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
@@ -17,23 +21,23 @@ import static org.mockito.Mockito.when;
 public class OnAddPlayerCommand {
 
     @Mock
-    private AggregateRootRepository<Game> repository;
+    private EventStore eventStreams;
 
     private BriscolaCommandHandlers handler;
 
     @Before
     public void setup() {
-        handler = new BriscolaCommandHandlers(repository);
+        handler = new BriscolaCommandHandlers(eventStreams);
     }
 
     @Test
     public void a_new_player_is_added() {
-        Game createdGame = new Game(gameId, gameName);
-        when(repository.withId(gameId)).thenReturn(createdGame);
+        GameCreated event = new GameCreated(gameId, gameName);
+        when(eventStreams.loadEventStream(gameId)).thenReturn(asList(event));
 
-        handler.handle(new AddPlayer(commandId, gameId, playerName, 1));
+        handler.handle(new AddPlayer(commandId, gameId, playerName, 0));
 
-        verify(repository).add(isA(Game.class), eq(1));
+        verify(eventStreams).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(0));
     }
 
     private UUID commandId = randomUUID();

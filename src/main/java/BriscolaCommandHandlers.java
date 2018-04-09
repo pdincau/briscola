@@ -1,24 +1,29 @@
 import commands.AddPlayer;
 import commands.CreateGame;
+import events.Event;
+
+import java.util.List;
 
 public class BriscolaCommandHandlers {
 
-    private AggregateRootRepository<Game> allGames;
+    private EventStore eventStore;
 
-    public BriscolaCommandHandlers(AggregateRootRepository<Game> allGames) {
-        this.allGames = allGames;
+    public BriscolaCommandHandlers(EventStore eventStore) {
+        this.eventStore = eventStore;
     }
 
     public void handle(CreateGame command) {
         Game game = new Game(command.gameId, command.gameName);
-        allGames.add(game, -1);
+
+        eventStore.appendToStream(game.getId(), game.changes(), -1);
     }
 
     public void handle(AddPlayer command) {
-        Game game = allGames.withId(command.gameId);
+        List<Event> events = eventStore.loadEventStream(command.gameId);
+        Game game = Game.from(events);
 
         game.addPlayer(command.playerName);
 
-        allGames.add(game, command.originalVersion);
+        eventStore.appendToStream(game.getId(), game.changes(), command.originalVersion);
     }
 }

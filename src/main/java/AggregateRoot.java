@@ -11,7 +11,7 @@ public abstract class AggregateRoot {
     private Map<Class, Consumer> appliers = new HashMap<>();
     private final List<Event> changes = new ArrayList<>();
 
-    public List<Event> uncomittedChanges() {
+    public List<Event> changes() {
         return changes;
     }
 
