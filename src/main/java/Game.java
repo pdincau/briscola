@@ -12,6 +12,7 @@ public class Game extends AggregateRoot {
     private UUID id;
     private String name;
     private List<Player> players;
+    private Deck deck;
 
     public Game(UUID id, String name) {
         this();
@@ -31,6 +32,7 @@ public class Game extends AggregateRoot {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
+        deck = Deck.shuffleWith(id);
     }
 
     private void apply(PlayerJoined event) {
