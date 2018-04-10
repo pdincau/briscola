@@ -20,7 +20,7 @@ public class DeckProcessManager {
 
     @Subscribe
     public void consume(PlayerJoined event) {
-        UUID gameId = event.id;
+        UUID gameId = event .id;
         Integer count = store.getOrDefault(gameId, 0);
         Integer newCount = count + 1;
         store.put(gameId, newCount);
