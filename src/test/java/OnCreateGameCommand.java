@@ -9,7 +9,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.anyListOf;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,7 +32,7 @@ public class OnCreateGameCommand {
 
         handler.handle(command);
 
-        verify(eventStreams).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(-1));
+        verify(eventStreams).appendToStream(eq(gameId), anyListOf(Event.class), eq(-1));
     }
 
     private UUID commandId = randomUUID();
