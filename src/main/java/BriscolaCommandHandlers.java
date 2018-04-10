@@ -19,11 +19,11 @@ public class BriscolaCommandHandlers {
     }
 
     public void handle(AddPlayer command) {
-        List<Event> events = eventStore.loadEventStream(command.gameId);
-        Game game = Game.from(events);
+        EventStream stream = eventStore.loadEventStream(command.gameId);
+        Game game = Game.from(stream.events());
 
         game.addPlayer(command.playerName);
 
-        eventStore.appendToStream(game.getId(), game.changes(), command.originalVersion);
+        eventStore.appendToStream(game.getId(), game.changes(), stream.version());
     }
 }

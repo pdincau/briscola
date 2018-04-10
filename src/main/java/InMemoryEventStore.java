@@ -2,15 +2,13 @@ import events.Event;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
-public class InMemoryEventStream implements EventStore {
+public class InMemoryEventStore implements EventStore {
 
     private final EventPublisher publisher;
 
     private final Map<UUID, List<EventDescriptor>> store = new HashMap<>();
 
-    public InMemoryEventStream(EventPublisher publisher) {
+    public InMemoryEventStore(EventPublisher publisher) {
         this.publisher = publisher;
     }
 
@@ -35,22 +33,18 @@ public class InMemoryEventStream implements EventStore {
     }
 
     @Override
-    public List<Event> loadEventStream(UUID aggregateId) {
+    public EventStream loadEventStream(UUID aggregateId) {
         List<EventDescriptor> eventDescriptors = store.get(aggregateId);
 
         if (aggregateNotFound(eventDescriptors)) {
             throw new AggregateNotFoundException();
         }
 
-        return descriptorsToEvents(eventDescriptors);
+        return EventStream.from(eventDescriptors);
     }
 
     private boolean aggregateNotFound(List<EventDescriptor> eventDescriptors) {
         return eventDescriptors == null;
-    }
-
-    private List<Event> descriptorsToEvents(List<EventDescriptor> eventDescriptors) {
-        return eventDescriptors.stream().map(descriptor -> descriptor.event).collect(toList());
     }
 
 }

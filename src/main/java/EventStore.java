@@ -7,5 +7,5 @@ public interface EventStore {
 
     void appendToStream(UUID aggregateId, List<Event> events, int expectedVersion);
 
-    List<Event> loadEventStream(UUID aggregateId);
+    EventStream loadEventStream(UUID aggregateId);
 }

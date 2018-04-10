@@ -21,25 +21,30 @@ import static org.mockito.Mockito.when;
 public class OnAddPlayerCommand {
 
     @Mock
-    private EventStore eventStreams;
+    private EventStore eventStore;
 
     private BriscolaCommandHandlers handler;
 
     @Before
     public void setup() {
-        handler = new BriscolaCommandHandlers(eventStreams);
+        handler = new BriscolaCommandHandlers(eventStore);
     }
 
     @Test
     public void a_new_player_is_added() {
         GameCreated event = new GameCreated(gameId, gameName);
-        when(eventStreams.loadEventStream(gameId)).thenReturn(asList(event));
+        when(eventStore.loadEventStream(gameId)).thenReturn(streamFrom(event, gameId, version));
 
-        handler.handle(new AddPlayer(commandId, gameId, playerName, 0));
+        handler.handle(new AddPlayer(commandId, gameId, playerName, version));
 
-        verify(eventStreams).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(0));
+        verify(eventStore).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(version));
     }
 
+    private EventStream streamFrom(GameCreated event, UUID gameId, int version) {
+        return EventStream.from(asList(new EventDescriptor(event, gameId, version)));
+    }
+
+    private int version = 0;
     private UUID commandId = randomUUID();
     private UUID gameId = randomUUID();
     private String gameName = "a game name";
