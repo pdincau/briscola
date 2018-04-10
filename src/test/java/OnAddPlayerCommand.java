@@ -35,7 +35,7 @@ public class OnAddPlayerCommand {
         GameCreated event = new GameCreated(gameId, gameName);
         when(eventStore.loadEventStream(gameId)).thenReturn(streamFrom(event, gameId, version));
 
-        handler.handle(new AddPlayer(commandId, gameId, playerName, version));
+        handler.handle(new AddPlayer(commandId, gameId, playerName));
 
         verify(eventStore).appendToStream(isA(UUID.class), anyListOf(Event.class), eq(version));
     }
