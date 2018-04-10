@@ -1,4 +1,5 @@
 import events.Event;
+import exceptions.ConcurrencyException;
 
 import java.util.*;
 
@@ -14,19 +15,17 @@ public class InMemoryEventStore implements EventStore {
 
     @Override
     public void appendToStream(UUID aggregateId, List<Event> events, int expectedVersion) {
-        List<EventDescriptor> eventDescriptors = store.get(aggregateId);
+        List<EventDescriptor> eventDescriptors = descriptorsFor(aggregateId);
         if (aggregateNotFound(eventDescriptors)) {
-            eventDescriptors = new ArrayList<>();
             store.put(aggregateId, eventDescriptors);
-        } else if(eventDescriptors.get(eventDescriptors.size() - 1).version != expectedVersion && expectedVersion != -1) {
+        } else if(conflictExists(expectedVersion, eventDescriptors)) {
             throw new ConcurrencyException();
         }
 
         int i = expectedVersion;
 
         for (Event event : events) {
-            i++;
-            event.version = i;
+            event.version = ++i;
             eventDescriptors.add(new EventDescriptor(event, aggregateId, i));
             publisher.publish(event);
         }
@@ -34,7 +33,7 @@ public class InMemoryEventStore implements EventStore {
 
     @Override
     public EventStream loadEventStream(UUID aggregateId) {
-        List<EventDescriptor> eventDescriptors = store.get(aggregateId);
+        List<EventDescriptor> eventDescriptors = descriptorsFor(aggregateId);
 
         if (aggregateNotFound(eventDescriptors)) {
             throw new AggregateNotFoundException();
@@ -44,7 +43,15 @@ public class InMemoryEventStore implements EventStore {
     }
 
     private boolean aggregateNotFound(List<EventDescriptor> eventDescriptors) {
-        return eventDescriptors == null;
+        return eventDescriptors.isEmpty();
+    }
+
+    private List<EventDescriptor> descriptorsFor(UUID aggregateId) {
+        return store.getOrDefault(aggregateId, new ArrayList<>());
+    }
+
+    private boolean conflictExists(int expectedVersion, List<EventDescriptor> eventDescriptors) {
+        return eventDescriptors.get(eventDescriptors.size() - 1).version != expectedVersion && expectedVersion != -1;
     }
 
 }

@@ -1,3 +1,4 @@
+import exceptions.InvalidOperationException;
 import org.junit.Test;
 
 import java.util.UUID;

@@ -1,7 +1,6 @@
 import events.Event;
 
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 

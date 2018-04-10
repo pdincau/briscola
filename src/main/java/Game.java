@@ -1,6 +1,7 @@
 import events.Event;
 import events.GameCreated;
 import events.PlayerJoined;
+import exceptions.InvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.List;

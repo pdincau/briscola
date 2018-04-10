@@ -23,7 +23,7 @@ public class BriscolaCommandHandlers {
         Game game = Game.from(stream.events());
 
         game.addPlayer(command.playerName);
-
+        //TODO: maybe we don't need game.getId()
         eventStore.appendToStream(game.getId(), game.changes(), stream.version());
     }
 }
