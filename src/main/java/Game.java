@@ -49,17 +49,6 @@ public class Game extends AggregateRoot {
         deck = deck.remove(card);
     }
 
-    private Player playerWithName(String name) {
-        return players.stream().filter(player -> player.hasName(name)).findFirst().get();
-
-    }
-
-    private void validateExistsPlayerWithName(String name) {
-        if (!isAlreadyInGame(new Player(name))) {
-            throw new InvalidOperationException("Player not in game");
-        }
-    }
-
     private void apply(GameCreated event) {
         id = event.id;
         name = event.name;
@@ -85,14 +74,25 @@ public class Game extends AggregateRoot {
         return players.size() >= 4;
     }
 
-    private void validateIsNewPlayer(Player candidatePlayer) {
-        if (isAlreadyInGame(candidatePlayer)) {
+    private void validateIsNewPlayer(Player player) {
+        if (isInGame(player)) {
             throw new InvalidOperationException("Player with this name is already in game");
         }
     }
 
-    private boolean isAlreadyInGame(Player candidatePlayer) {
-        return players.contains(candidatePlayer);
+    private boolean isInGame(Player player) {
+        return players.contains(player);
+    }
+
+    private Player playerWithName(String name) {
+        return players.stream().filter(player -> player.hasName(name)).findFirst().get();
+
+    }
+
+    private void validateExistsPlayerWithName(String name) {
+        if (!isInGame(new Player(name))) {
+            throw new InvalidOperationException("Player not in game");
+        }
     }
 
     public UUID getId() {
