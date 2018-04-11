@@ -1,3 +1,4 @@
+import events.CardDealt;
 import events.Event;
 import events.GameCreated;
 import events.PlayerJoined;
@@ -22,17 +23,48 @@ public class Game extends AggregateRoot {
     private Game() {
         register(GameCreated.class, this::apply);
         register(PlayerJoined.class, this::apply);
+        register(CardDealt.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
         applyChange(new PlayerJoined(id, playerName));
     }
 
+    public void dealFirstHand() {
+        for(Player player: players) {
+            List<Card> cards = deck.select(3);
+            for(Card card: cards) {
+                CardDealt event = new CardDealt(id, player.name, card.seed, card.value);
+                apply(event);
+            }
+        }
+    }
+
+    private void apply(CardDealt event) {
+        Card card = new Card(event.seed, event.value);
+        String playerName = event.name;
+        validateExistsPlayerWithName(playerName);
+        Player player = playerWithName(playerName);
+        player.receive(card);
+        deck = deck.remove(card);
+    }
+
+    private Player playerWithName(String name) {
+        return players.stream().filter(player -> player.hasName(name)).findFirst().get();
+
+    }
+
+    private void validateExistsPlayerWithName(String name) {
+        if (!isAlreadyInGame(new Player(name))) {
+            throw new InvalidOperationException("Player not in game");
+        }
+    }
+
     private void apply(GameCreated event) {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
-        deck = Deck.shuffleWith(id);
+        deck = Deck.shuffleWithSeed(id.hashCode());
     }
 
     private void apply(PlayerJoined event) {

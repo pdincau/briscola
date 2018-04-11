@@ -10,7 +10,7 @@ public class CommandBus implements CommandSender {
     private static final ExecutorService threadPool = newCachedThreadPool();
     private final AsyncEventBus bus;
 
-    public CommandBus(BriscolaCommandHandlers handler) {
+    public CommandBus(BriscolaCommandHandler handler) {
         this.bus = new AsyncEventBus(threadPool);
         this.bus.register(handler);
     }

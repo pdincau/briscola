@@ -19,11 +19,11 @@ public class OnCreateGameCommand {
     @Mock
     private EventStore eventStreams;
 
-    private BriscolaCommandHandlers handler;
+    private BriscolaCommandHandler handler;
 
     @Before
     public void setup() {
-        handler = new BriscolaCommandHandlers(eventStreams);
+        handler = new BriscolaCommandHandler(eventStreams);
     }
 
     @Test

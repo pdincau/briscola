@@ -13,7 +13,6 @@ import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -23,11 +22,11 @@ public class OnAddPlayerCommand {
     @Mock
     private EventStore eventStore;
 
-    private BriscolaCommandHandlers handler;
+    private BriscolaCommandHandler handler;
 
     @Before
     public void setup() {
-        handler = new BriscolaCommandHandlers(eventStore);
+        handler = new BriscolaCommandHandler(eventStore);
     }
 
     @Test

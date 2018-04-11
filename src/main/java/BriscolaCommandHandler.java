@@ -1,14 +1,12 @@
 import commands.AddPlayer;
 import commands.CreateGame;
-import events.Event;
+import commands.DealFirstHand;
 
-import java.util.List;
-
-public class BriscolaCommandHandlers {
+public class BriscolaCommandHandler {
 
     private EventStore eventStore;
 
-    public BriscolaCommandHandlers(EventStore eventStore) {
+    public BriscolaCommandHandler(EventStore eventStore) {
         this.eventStore = eventStore;
     }
 
@@ -26,4 +24,14 @@ public class BriscolaCommandHandlers {
         //TODO: maybe we don't need game.getId()
         eventStore.appendToStream(game.getId(), game.changes(), stream.version());
     }
+
+    public void handle(DealFirstHand command) {
+        EventStream stream = eventStore.loadEventStream(command.gameId);
+        Game game = Game.from(stream.events());
+
+        game.dealFirstHand();
+        //TODO: maybe we don't need game.getId()
+        eventStore.appendToStream(game.getId(), game.changes(), stream.version());
+    }
 }
+

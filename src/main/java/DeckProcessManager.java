@@ -1,5 +1,5 @@
 import com.google.common.eventbus.Subscribe;
-import commands.DealCards;
+import commands.DealFirstHand;
 import events.PlayerJoined;
 
 import java.util.HashMap;
@@ -25,7 +25,7 @@ public class DeckProcessManager {
         Integer newCount = count + 1;
         store.put(gameId, newCount);
         if (newCount.equals(4)) {
-            commandSender.send(new DealCards(randomUUID(), gameId));
+            commandSender.send(new DealFirstHand(randomUUID(), gameId));
         }
     }
 }

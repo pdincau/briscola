@@ -1,4 +1,4 @@
-import commands.DealCards;
+import commands.DealFirstHand;
 import events.PlayerJoined;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class WhenFourPlayersJoined {
         manager.consume(new PlayerJoined(gameId, "player 3"));
         manager.consume(new PlayerJoined(gameId, "player 4"));
 
-        verify(commandSender).send(isA(DealCards.class));
+        verify(commandSender).send(isA(DealFirstHand.class));
     }
 
     private UUID gameId = randomUUID();
