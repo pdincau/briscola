@@ -74,25 +74,26 @@ public class Game extends AggregateRoot {
         return players.size() >= 4;
     }
 
-    private void validateIsNewPlayer(Player player) {
-        if (isInGame(player)) {
-            throw new InvalidOperationException("Player with this name is already in game");
-        }
-    }
-
-    private boolean isInGame(Player player) {
-        return players.contains(player);
-    }
 
     private Player playerWithName(String name) {
         return players.stream().filter(player -> player.hasName(name)).findFirst().get();
 
     }
 
+    private void validateIsNewPlayer(Player player) {
+        if (isInGame(player)) {
+            throw new InvalidOperationException("Player with this name is already in game");
+        }
+    }
+
     private void validateExistsPlayerWithName(String name) {
         if (!isInGame(new Player(name))) {
             throw new InvalidOperationException("Player not in game");
         }
+    }
+
+    private boolean isInGame(Player player) {
+        return players.contains(player);
     }
 
     public UUID getId() {

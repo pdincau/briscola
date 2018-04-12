@@ -19,12 +19,12 @@ public class WhenFourPlayersJoined {
 
     @Test
     public void its_time_to_deal_cards() {
-        DeckProcessManager manager = new DeckProcessManager(commandSender);
+        FirstHandDealer dealer = new FirstHandDealer(commandSender);
 
-        manager.consume(new PlayerJoined(gameId, "player 1"));
-        manager.consume(new PlayerJoined(gameId, "player 2"));
-        manager.consume(new PlayerJoined(gameId, "player 3"));
-        manager.consume(new PlayerJoined(gameId, "player 4"));
+        dealer.consume(new PlayerJoined(gameId, "player 1"));
+        dealer.consume(new PlayerJoined(gameId, "player 2"));
+        dealer.consume(new PlayerJoined(gameId, "player 3"));
+        dealer.consume(new PlayerJoined(gameId, "player 4"));
 
         verify(commandSender).send(isA(DealFirstHand.class));
     }

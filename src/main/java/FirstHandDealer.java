@@ -8,12 +8,12 @@ import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
 
-public class DeckProcessManager {
+public class FirstHandDealer {
 
     private CommandSender commandSender;
     private Map<UUID, Integer> store;
 
-    public DeckProcessManager(CommandSender commandSender) {
+    public FirstHandDealer(CommandSender commandSender) {
         this.commandSender = commandSender;
         store = new HashMap<>();
     }
