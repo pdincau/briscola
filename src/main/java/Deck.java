@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.rotate;
 import static java.util.stream.Collectors.toList;
 
 public class Deck {
@@ -22,6 +23,11 @@ public class Deck {
     public Deck remove(Card card) {
         List<Card> newCards = currentCardsWithout(card);
         return new Deck(newCards);
+    }
+
+    public Deck moveFirstToLast() {
+        rotate(cards, -1);
+        return new Deck(cards);
     }
 
     public static Deck shuffleWithSeed(int seed) {
@@ -51,5 +57,4 @@ public class Deck {
     private List<Card> currentCardsWithout(Card cardToRemove) {
         return cards.stream().filter(card -> !card.equals(cardToRemove)).collect(toList());
     }
-
 }

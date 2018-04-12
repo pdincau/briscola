@@ -1,7 +1,4 @@
-import events.CardDealt;
-import events.Event;
-import events.GameCreated;
-import events.PlayerJoined;
+import events.*;
 import exceptions.InvalidOperationException;
 
 import java.util.ArrayList;
@@ -14,6 +11,7 @@ public class Game extends AggregateRoot {
     private String name;
     private List<Player> players;
     private Deck deck;
+    private Seed seed;
 
     public Game(UUID id, String name) {
         this();
@@ -38,6 +36,9 @@ public class Game extends AggregateRoot {
                 apply(event);
             }
         }
+        Card briscola = deck.select(1).get(0);
+        BriscolaSelected event = new BriscolaSelected(id, briscola.seed, briscola.value);
+        apply(event);
     }
 
     private void apply(CardDealt event) {
@@ -62,6 +63,11 @@ public class Game extends AggregateRoot {
         validateIsNewPlayer(candidatePlayer);
         validateNumberOfPlayers();
         players.add(candidatePlayer);
+    }
+
+    private void apply(BriscolaSelected event) {
+        seed = new Seed(event.seed);
+        deck = deck.moveFirstToLast();
     }
 
     private void validateNumberOfPlayers() {
