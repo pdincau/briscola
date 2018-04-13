@@ -22,6 +22,7 @@ public class Game extends AggregateRoot {
         register(GameCreated.class, this::apply);
         register(PlayerJoined.class, this::apply);
         register(CardDealt.class, this::apply);
+        register(BriscolaSelected.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
@@ -33,12 +34,12 @@ public class Game extends AggregateRoot {
             List<Card> cards = deck.select(3);
             for(Card card: cards) {
                 CardDealt event = new CardDealt(id, player.name, card.seed, card.value);
-                apply(event);
+                applyChange(event);
             }
         }
         Card briscola = deck.select(1).get(0);
         BriscolaSelected event = new BriscolaSelected(id, briscola.seed, briscola.value);
-        apply(event);
+        applyChange(event);
     }
 
     private void apply(CardDealt event) {

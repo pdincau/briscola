@@ -27,6 +27,7 @@ public class InMemoryEventStore implements EventStore {
         for (Event event : events) {
             event.version = ++i;
             eventDescriptors.add(new EventDescriptor(event, aggregateId, i));
+            store.put(aggregateId, eventDescriptors);
             publisher.publish(event);
         }
     }

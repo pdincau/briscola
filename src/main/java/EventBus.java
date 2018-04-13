@@ -21,4 +21,8 @@ public class EventBus implements EventPublisher {
     public void publish(Event event) {
         bus.post(event);
     }
+
+    public void register(Object listener) {
+        bus.register(listener);
+    }
 }

@@ -57,4 +57,5 @@ public class Deck {
     private List<Card> currentCardsWithout(Card cardToRemove) {
         return cards.stream().filter(card -> !card.equals(cardToRemove)).collect(toList());
     }
+
 }
