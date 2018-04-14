@@ -24,10 +24,12 @@ public class BriscolaGame {
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Ivo"));
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Joe"));
 
-        Card card = firstCardOfFirstPlayer();
 
         waitForSeconds(1);
+        Card card = firstCardOfFirstPlayer();
         commandBus.send(new PlayCard(UUID.randomUUID(), gameId, "Pietro", card.seed, card.value));
+        Card anotherCard = firstCardOfSecondPlayer();
+        commandBus.send(new PlayCard(UUID.randomUUID(), gameId, "Paolo", anotherCard.seed, anotherCard.value));
     }
 
     private static void waitForSeconds(int seconds) {
@@ -41,6 +43,11 @@ public class BriscolaGame {
     private static Card firstCardOfFirstPlayer() {
         Deck deck = Deck.shuffleWithSeed(gameId.hashCode());
         return deck.select(1).get(0);
+    }
+
+    private static Card firstCardOfSecondPlayer() {
+        Deck deck = Deck.shuffleWithSeed(gameId.hashCode());
+        return deck.select(4).get(3);
     }
 
 }

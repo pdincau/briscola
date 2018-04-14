@@ -10,7 +10,7 @@ import static org.assertj.core.groups.Tuple.tuple;
 public class CardCanBePlayed {
 
     @Test
-    public void by_player_during_her_turn() {
+    public void by_players_during_their_turn() {
         Game game = new Game(id, gameName);
         game.addPlayer(playerName + "1");
         game.addPlayer(playerName + "2");

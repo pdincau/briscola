@@ -54,12 +54,21 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(CardPlayed event) {
+        Card card = new Card(event.seed, event.value);
         String playerName = event.name;
         validateExistsPlayerWithName(playerName);
-        Player player = playerWithName(playerName);
-        validateIsTurnOf(player);
-        validatePlayerHasCard(player, new Card(event.seed, event.value));
-        //TODO: here I should give the turn to next player
+        Player playerCurrentlyPlaying = playerWithName(playerName);
+        validateIsTurnOf(playerCurrentlyPlaying);
+        validatePlayerHasCard(playerCurrentlyPlaying, card);
+        playerAfter(playerCurrentlyPlaying).youAreNextToPlay();
+    }
+
+    private Player playerAfter(Player player) {
+        int position = players.indexOf(player);
+        if (position == 3) {
+            return players.get(0);
+        }
+        return players.get(position+1);
     }
 
     private void apply(CardDealt event) {
