@@ -13,6 +13,12 @@ public class Game extends AggregateRoot {
     private Deck deck;
     private Seed seed;
 
+    public static Game from(List<Event> events) {
+        Game game = new Game();
+        events.forEach(game::reapplyChange);
+        return game;
+    }
+
     public Game(UUID id, String name) {
         this();
         applyChange(new GameCreated(id, name));
@@ -118,13 +124,9 @@ public class Game extends AggregateRoot {
     }
 
     private void validateIsTurnOf(Player player) {
-        if (isNotTurnOfPlayer(player)) {
+        if (!player.canYouPlay()) {
             throw new InvalidOperationException("Player can't play during another player turn");
         }
-    }
-
-    private boolean isNotTurnOfPlayer(Player player) {
-        return !player.canYouPlay();
     }
 
     private void validatePlayerHasCard(Player player, Card card) {
@@ -135,12 +137,6 @@ public class Game extends AggregateRoot {
 
     public UUID getId() {
         return id;
-    }
-
-    public static Game from(List<Event> events) {
-        Game game = new Game();
-        events.forEach(game::reapplyChange);
-        return game;
     }
 
 }
