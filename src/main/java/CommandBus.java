@@ -1,17 +1,12 @@
-import com.google.common.eventbus.AsyncEventBus;
 import commands.Command;
-
-import java.util.concurrent.ExecutorService;
-
-import static java.util.concurrent.Executors.newCachedThreadPool;
+import com.google.common.eventbus.EventBus;
 
 public class CommandBus implements CommandSender {
 
-    private static final ExecutorService threadPool = newCachedThreadPool();
-    private final AsyncEventBus bus;
+    private final EventBus bus;
 
     public CommandBus(BriscolaCommandHandler handler) {
-        this.bus = new AsyncEventBus(threadPool);
+        this.bus = new EventBus();
         this.bus.register(handler);
     }
 

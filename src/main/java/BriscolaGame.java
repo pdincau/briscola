@@ -14,28 +14,13 @@ public class BriscolaGame {
         publisher.register(firstHandDealer);
 
         UUID gameId = UUID.randomUUID();
-        CreateGame createGame = new CreateGame(UUID.randomUUID(), gameId, "A Guided Game");
-        commandBus.send(createGame);
-        waitFor(1000);
+        commandBus.send(new CreateGame(UUID.randomUUID(), gameId, "A Guided Game"));
 
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Pietro"));
-        waitFor(1000);
-
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Paolo"));
-        waitFor(1000);
-
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Ivo"));
-        waitFor(1000);
-
         commandBus.send(new AddPlayer(UUID.randomUUID(), gameId, "Joe"));
 
     }
 
-    private static void waitFor(int millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }
