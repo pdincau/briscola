@@ -7,6 +7,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.rotate;
 import static java.util.stream.Collectors.toList;
 
+//TODO: TEST METHODS
 public class Deck {
 
     private List<Card> cards;

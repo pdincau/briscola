@@ -23,6 +23,7 @@ public class Game extends AggregateRoot {
         register(PlayerJoined.class, this::apply);
         register(CardDealt.class, this::apply);
         register(BriscolaSelected.class, this::apply);
+        register(CardPlayed.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
@@ -40,6 +41,19 @@ public class Game extends AggregateRoot {
         Card briscola = deck.select(1).get(0);
         BriscolaSelected event = new BriscolaSelected(id, briscola.seed, briscola.value);
         applyChange(event);
+    }
+
+    public void playCard(String playerName, Card card) {
+        applyChange(new CardPlayed(id, playerName, card.seed, card.value));
+    }
+
+    private void apply(CardPlayed event) {
+        String playerName = event.name;
+        validateExistsPlayerWithName(playerName);
+        Player player = playerWithName(playerName);
+        validateIsTurnOf(player);
+        validatePlayerHasCard(player, new Card(event.seed, event.value));
+        //TODO: here I should give the turn to next player
     }
 
     private void apply(CardDealt event) {
@@ -69,6 +83,8 @@ public class Game extends AggregateRoot {
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
+        Player nextPlayerToPlay = players.get(0);
+        nextPlayerToPlay.youAreNextToPlay();
     }
 
     private void validateNumberOfPlayers() {
@@ -81,10 +97,8 @@ public class Game extends AggregateRoot {
         return players.size() >= 4;
     }
 
-
     private Player playerWithName(String name) {
         return players.stream().filter(player -> player.hasName(name)).findFirst().get();
-
     }
 
     private void validateIsNewPlayer(Player player) {
@@ -103,6 +117,22 @@ public class Game extends AggregateRoot {
         return players.contains(player);
     }
 
+    private void validateIsTurnOf(Player player) {
+        if (isNotTurnOfPlayer(player)) {
+            throw new InvalidOperationException("Player can't play during another player turn");
+        }
+    }
+
+    private boolean isNotTurnOfPlayer(Player player) {
+        return !player.canYouPlay();
+    }
+
+    private void validatePlayerHasCard(Player player, Card card) {
+        if (!player.hasInHand(card)) {
+            throw new InvalidOperationException("Player can't play a card not in her hand");
+        }
+    }
+
     public UUID getId() {
         return id;
     }
@@ -112,4 +142,5 @@ public class Game extends AggregateRoot {
         events.forEach(game::reapplyChange);
         return game;
     }
+
 }

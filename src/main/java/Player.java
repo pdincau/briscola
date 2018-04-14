@@ -10,10 +10,12 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 public class Player {
     public final String name;
     private List<Card> cards;
+    private Boolean turn;
 
     public Player(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
+        this.turn = false;
     }
 
     boolean hasName(String name) {
@@ -31,9 +33,21 @@ public class Player {
         return ImmutableList.copyOf(cards);
     }
 
+    public void youAreNextToPlay() {
+        turn = true;
+    }
+
+    public Boolean canYouPlay() {
+        return turn;
+    }
+
+    public Boolean hasInHand(Card card) {
+        return cards.contains(card);
+    }
+
     @Override
     public boolean equals(Object obj) {
-        return reflectionEquals(this, obj, "cards");
+        return reflectionEquals(this, obj, "cards", "turn");
     }
 
     @Override
