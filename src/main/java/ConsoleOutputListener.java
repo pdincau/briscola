@@ -22,4 +22,9 @@ public class ConsoleOutputListener {
     public void consume(BriscolaSelected event) {
         System.out.println("Briscola selected: (" + event.value + " " + event.seed + ")");
     }
+
+    @Subscribe
+    public void consume(CardPlayed event) {
+        System.out.println("Player with name: " + event.name + " played card: (" + event.value + " " + event.seed + ")");
+    }
 }
