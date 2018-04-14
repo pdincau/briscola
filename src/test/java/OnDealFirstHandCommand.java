@@ -31,7 +31,7 @@ public class OnDealFirstHandCommand {
     }
 
     @Test
-    public void cards_are_given() {
+    public void cards_are_given_and_briscola_is_shown() {
         when(eventStore.loadEventStream(gameId)).thenReturn(streamForGameWith4Players());
 
         handler.handle(new DealFirstHand(commandId, gameId));
