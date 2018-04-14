@@ -53,33 +53,6 @@ public class Game extends AggregateRoot {
         applyChange(new CardPlayed(id, playerName, card.seed, card.value));
     }
 
-    private void apply(CardPlayed event) {
-        Card card = new Card(event.seed, event.value);
-        String playerName = event.name;
-        validateExistsPlayerWithName(playerName);
-        Player playerCurrentlyPlaying = playerWithName(playerName);
-        validateIsTurnOf(playerCurrentlyPlaying);
-        validatePlayerHasCard(playerCurrentlyPlaying, card);
-        playerAfter(playerCurrentlyPlaying).youAreNextToPlay();
-    }
-
-    private Player playerAfter(Player player) {
-        int position = players.indexOf(player);
-        if (position == 3) {
-            return players.get(0);
-        }
-        return players.get(position+1);
-    }
-
-    private void apply(CardDealt event) {
-        Card card = new Card(event.seed, event.value);
-        String playerName = event.name;
-        validateExistsPlayerWithName(playerName);
-        Player player = playerWithName(playerName);
-        player.receive(card);
-        deck = deck.remove(card);
-    }
-
     private void apply(GameCreated event) {
         id = event.id;
         name = event.name;
@@ -95,11 +68,30 @@ public class Game extends AggregateRoot {
         players.add(candidatePlayer);
     }
 
+    private void apply(CardDealt event) {
+        Card card = new Card(event.seed, event.value);
+        String playerName = event.name;
+        validateExistsPlayerWithName(playerName);
+        Player player = playerWithName(playerName);
+        player.receive(card);
+        deck = deck.remove(card);
+    }
+
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
-        Player nextPlayerToPlay = players.get(0);
-        nextPlayerToPlay.youAreNextToPlay();
+        Player firstPlayer = players.get(0);
+        firstPlayer.youAreNextToPlay();
+    }
+
+    private void apply(CardPlayed event) {
+        Card card = new Card(event.seed, event.value);
+        String playerName = event.name;
+        validateExistsPlayerWithName(playerName);
+        Player playerCurrentlyPlaying = playerWithName(playerName);
+        validateIsTurnOf(playerCurrentlyPlaying);
+        validatePlayerHasCard(playerCurrentlyPlaying, card);
+        playerAfter(playerCurrentlyPlaying).youAreNextToPlay();
     }
 
     private void validateNumberOfPlayers() {
@@ -142,6 +134,14 @@ public class Game extends AggregateRoot {
         if (!player.hasInHand(card)) {
             throw new InvalidOperationException("Player can't play a card not in her hand");
         }
+    }
+
+    private Player playerAfter(Player player) {
+        int position = players.indexOf(player);
+        if (position == 3) {
+            return players.get(0);
+        }
+        return players.get(position+1);
     }
 
     public UUID getId() {
