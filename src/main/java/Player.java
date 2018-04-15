@@ -37,6 +37,10 @@ public class Player {
         turn = true;
     }
 
+    public void youEndedYourTurn() {
+        turn = false;
+    }
+
     public Boolean canYouPlay() {
         return turn;
     }
@@ -54,5 +58,4 @@ public class Player {
     public int hashCode() {
         return reflectionHashCode(this);
     }
-
 }

@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.rotate;

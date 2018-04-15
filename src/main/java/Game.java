@@ -80,8 +80,7 @@ public class Game extends AggregateRoot {
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
-        Player firstPlayer = players.get(0);
-        firstPlayer.youAreNextToPlay();
+        firstPlayer().youAreNextToPlay();
     }
 
     private void apply(CardPlayed event) {
@@ -91,7 +90,7 @@ public class Game extends AggregateRoot {
         Player playerCurrentlyPlaying = playerWithName(playerName);
         validateIsTurnOf(playerCurrentlyPlaying);
         validatePlayerHasCard(playerCurrentlyPlaying, card);
-        playerAfter(playerCurrentlyPlaying).youAreNextToPlay();
+        updateTurn(playerCurrentlyPlaying);
     }
 
     private void validateNumberOfPlayers() {
@@ -136,12 +135,17 @@ public class Game extends AggregateRoot {
         }
     }
 
-    private Player playerAfter(Player player) {
+    private void updateTurn(Player player) {
+        player.youEndedYourTurn();
         int position = players.indexOf(player);
-        if (position == 3) {
-            return players.get(0);
+        if (position < 3) {
+            Player nextPlayer = players.get(position + 1);
+            nextPlayer.youAreNextToPlay();
         }
-        return players.get(position+1);
+    }
+
+    private Player firstPlayer() {
+        return players.get(0);
     }
 
     public UUID getId() {
