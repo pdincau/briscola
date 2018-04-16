@@ -15,7 +15,7 @@ public class ConsoleOutputListener {
 
     @Subscribe
     public void consume(CardDealt event) {
-        System.out.println("Player with name: " + event.name + " received card (" + event.value + " " + event.seed + ")");
+        System.out.println("Player " + event.name + " received card (" + event.value + " " + event.seed + ")");
     }
 
     @Subscribe
@@ -25,6 +25,11 @@ public class ConsoleOutputListener {
 
     @Subscribe
     public void consume(CardPlayed event) {
-        System.out.println("Player with name: " + event.name + " played card: (" + event.value + " " + event.seed + ")");
+        System.out.println("Player " + event.name + " played card: (" + event.value + " " + event.seed + ")");
+    }
+
+    @Subscribe
+    public void consume(CardDrawn event) {
+        System.out.println("Player " + event.name + " drew card: (" + event.value + " " + event.seed + ")");
     }
 }

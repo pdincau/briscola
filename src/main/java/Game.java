@@ -30,6 +30,7 @@ public class Game extends AggregateRoot {
         register(CardDealt.class, this::apply);
         register(BriscolaSelected.class, this::apply);
         register(CardPlayed.class, this::apply);
+        register(CardDrawn.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
@@ -51,6 +52,11 @@ public class Game extends AggregateRoot {
 
     public void playCard(String playerName, Card card) {
         applyChange(new CardPlayed(id, playerName, card.seed, card.value));
+    }
+
+    public void drawCard(String playerName) {
+        Card drawnCard = deck.select(1).get(0);
+        applyChange(new CardDrawn(id, playerName, drawnCard.seed, drawnCard.value));
     }
 
     private void apply(GameCreated event) {
@@ -80,17 +86,51 @@ public class Game extends AggregateRoot {
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
-        firstPlayer().youAreNextToPlay();
+        firstPlayer().startPlayingTurn();
     }
 
     private void apply(CardPlayed event) {
-        Card card = new Card(event.seed, event.value);
         String playerName = event.name;
         validateExistsPlayerWithName(playerName);
-        Player playerCurrentlyPlaying = playerWithName(playerName);
-        validateIsTurnOf(playerCurrentlyPlaying);
-        validatePlayerHasCard(playerCurrentlyPlaying, card);
-        updateTurn(playerCurrentlyPlaying);
+        Player player = playerWithName(playerName);
+        validateIsPlayingTurnOf(player);
+        Card card = new Card(event.seed, event.value);
+        validateHasCard(player, card);
+        player.removeFromHand(card);
+        updatePlayingTurn(player);
+    }
+
+    private void apply(CardDrawn event) {
+        String playerName = event.name;
+        validateExistsPlayerWithName(playerName);
+        Player player = playerWithName(playerName);
+        validateIsDrawingTurnOf(player);
+        Card card = new Card(event.seed, event.value);
+        player.receive(card);
+        deck = deck.remove(card);
+        updateDrawingTurn(player);
+    }
+
+    private void updatePlayingTurn(Player player) {
+        player.endPlayingTurn();
+        int position = players.indexOf(player);
+        if (position < 3) {
+            Player nextPlayer = players.get(position + 1);
+            nextPlayer.startPlayingTurn();
+        } else {
+            firstPlayer().startDrawingTurn();
+        }
+    }
+
+    private void updateDrawingTurn(Player player) {
+        player.endDrawingTurn();
+        int position = players.indexOf(player);
+        if (position < 3) {
+            Player nextPlayer = players.get(position + 1);
+            nextPlayer.startDrawingTurn();
+        } else {
+            firstPlayer().startPlayingTurn();
+        }
     }
 
     private void validateNumberOfPlayers() {
@@ -123,24 +163,21 @@ public class Game extends AggregateRoot {
         return players.contains(player);
     }
 
-    private void validateIsTurnOf(Player player) {
-        if (!player.canYouPlay()) {
+    private void validateIsPlayingTurnOf(Player player) {
+        if (!player.canPlay()) {
             throw new InvalidOperationException("Player can't play during another player turn");
         }
     }
 
-    private void validatePlayerHasCard(Player player, Card card) {
-        if (!player.hasInHand(card)) {
-            throw new InvalidOperationException("Player can't play a card not in her hand");
+    private void validateIsDrawingTurnOf(Player player) {
+        if (!player.canDraw()) {
+            throw new InvalidOperationException("Player can't draw during another player turn");
         }
     }
 
-    private void updateTurn(Player player) {
-        player.youEndedYourTurn();
-        int position = players.indexOf(player);
-        if (position < 3) {
-            Player nextPlayer = players.get(position + 1);
-            nextPlayer.youAreNextToPlay();
+    private void validateHasCard(Player player, Card card) {
+        if (!player.hasInHand(card)) {
+            throw new InvalidOperationException("Player can't play a card not in her hand");
         }
     }
 
@@ -151,5 +188,4 @@ public class Game extends AggregateRoot {
     public UUID getId() {
         return id;
     }
-
 }

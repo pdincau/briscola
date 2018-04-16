@@ -3,19 +3,23 @@ import exceptions.InvalidOperationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
 
 public class Player {
     public final String name;
     private List<Card> cards;
-    private Boolean turn;
+    private Boolean playingTurn;
+    private Boolean drawingTurn;
 
     public Player(String name) {
         this.name = name;
         this.cards = new ArrayList<>();
-        this.turn = false;
+        this.playingTurn = false;
+        this.drawingTurn = false;
     }
 
     boolean hasName(String name) {
@@ -29,20 +33,36 @@ public class Player {
         cards.add(card);
     }
 
+    public void removeFromHand(Card cardToRemove) {
+        cards = cards.stream().filter(card -> !card.equals(cardToRemove)).collect(toList());
+    }
+
     public List<Card> cards() {
         return ImmutableList.copyOf(cards);
     }
 
-    public void youAreNextToPlay() {
-        turn = true;
+    public void startPlayingTurn() {
+        playingTurn = true;
     }
 
-    public void youEndedYourTurn() {
-        turn = false;
+    public void endPlayingTurn() {
+        playingTurn = false;
     }
 
-    public Boolean canYouPlay() {
-        return turn;
+    public void startDrawingTurn() {
+        drawingTurn = true;
+    }
+
+    public void endDrawingTurn() {
+        drawingTurn = false;
+    }
+
+    public Boolean canPlay() {
+        return playingTurn;
+    }
+
+    public Boolean canDraw() {
+        return drawingTurn;
     }
 
     public Boolean hasInHand(Card card) {
@@ -51,7 +71,7 @@ public class Player {
 
     @Override
     public boolean equals(Object obj) {
-        return reflectionEquals(this, obj, "cards", "turn");
+        return reflectionEquals(this, obj, "cards", "playingTurn", "drawingTurn");
     }
 
     @Override
