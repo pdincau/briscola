@@ -12,6 +12,7 @@ public class Game extends AggregateRoot {
     private List<Player> players;
     private Deck deck;
     private Seed seed;
+    private List<Card> playedCards;
 
     public static Game from(List<Event> events) {
         Game game = new Game();
@@ -63,6 +64,7 @@ public class Game extends AggregateRoot {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
+        playedCards = new ArrayList<>();
         deck = Deck.shuffleWithSeed(id.hashCode());
     }
 
@@ -97,6 +99,7 @@ public class Game extends AggregateRoot {
         Card card = new Card(event.seed, event.value);
         validateHasCard(player, card);
         player.removeFromHand(card);
+        playedCards.add(card);
         updatePlayingTurn(player);
     }
 
