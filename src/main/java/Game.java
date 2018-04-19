@@ -1,9 +1,7 @@
 import events.*;
 import exceptions.InvalidOperationException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Game extends AggregateRoot {
 
@@ -12,7 +10,10 @@ public class Game extends AggregateRoot {
     private List<Player> players;
     private Deck deck;
     private Seed seed;
-    private List<Card> playedCards;
+    private List<Card> table;
+    private Integer playersWhoPlayedInThisTurn;
+    private Integer playersWhoDrawInThisTurn;
+
 
     public static Game from(List<Event> events) {
         Game game = new Game();
@@ -32,6 +33,7 @@ public class Game extends AggregateRoot {
         register(BriscolaSelected.class, this::apply);
         register(CardPlayed.class, this::apply);
         register(CardDrawn.class, this::apply);
+        register(HandCompleted.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
@@ -53,6 +55,9 @@ public class Game extends AggregateRoot {
 
     public void playCard(String playerName, Card card) {
         applyChange(new CardPlayed(id, playerName, card.seed, card.value));
+        if (table.size() == 4) {
+            applyChange(new HandCompleted(id));
+        }
     }
 
     public void drawCard(String playerName) {
@@ -60,12 +65,20 @@ public class Game extends AggregateRoot {
         applyChange(new CardDrawn(id, playerName, drawnCard.seed, drawnCard.value));
     }
 
+    private void apply(HandCompleted event) {
+        //capire chi a vinto e dargli le carte
+        // va salvato nelle carte giocate anche chi la ha giocata
+        //Player winningHandPlayer = winningPlayerInHand();
+    }
+
     private void apply(GameCreated event) {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
-        playedCards = new ArrayList<>();
+        table = new ArrayList<>();
         deck = Deck.shuffleWithSeed(id.hashCode());
+        playersWhoDrawInThisTurn = 0;
+        playersWhoPlayedInThisTurn = 0;
     }
 
     private void apply(PlayerJoined event) {
@@ -99,7 +112,7 @@ public class Game extends AggregateRoot {
         Card card = new Card(event.seed, event.value);
         validateHasCard(player, card);
         player.removeFromHand(card);
-        playedCards.add(card);
+        table.add(card);
         updatePlayingTurn(player);
     }
 
@@ -115,25 +128,30 @@ public class Game extends AggregateRoot {
     }
 
     private void updatePlayingTurn(Player player) {
+        playersWhoPlayedInThisTurn++;
         player.endPlayingTurn();
-        int position = players.indexOf(player);
-        if (position < 3) {
-            Player nextPlayer = players.get(position + 1);
-            nextPlayer.startPlayingTurn();
-        } else {
+        if (playersWhoPlayedInThisTurn == 4) {
             firstPlayer().startDrawingTurn();
+        } else {
+            Player nextPlayer = playerAfter(player);
+            nextPlayer.startPlayingTurn();
         }
     }
 
     private void updateDrawingTurn(Player player) {
+        playersWhoPlayedInThisTurn++;
         player.endDrawingTurn();
-        int position = players.indexOf(player);
-        if (position < 3) {
-            Player nextPlayer = players.get(position + 1);
-            nextPlayer.startDrawingTurn();
-        } else {
+        if (playersWhoDrawInThisTurn == 4) {
             firstPlayer().startPlayingTurn();
+        } else {
+            Player nextPlayer = playerAfter(player);
+            nextPlayer.startDrawingTurn();
         }
+    }
+
+    private Player playerAfter(Player player) {
+        int position = players.indexOf(player);
+        return players.get((position % 3) + 1);
     }
 
     private void validateNumberOfPlayers() {
