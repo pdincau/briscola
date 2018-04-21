@@ -3,7 +3,7 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 
 public class Card {
 
-    public final String seed;
+    public final String seed; //TODO: use Seed
     public final String value;
 
     public Card(String seed, String value) {

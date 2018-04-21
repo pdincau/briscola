@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class BriscolaGame {
 
-    private static UUID gameId = UUID.randomUUID();
+    private static UUID gameId = UUID.fromString("0ce4420b-17f5-477e-b303-e2bf7528ffe4");
 
     public static void main(String[] args) {
         EventBus publisher = new EventBus(new ConsoleOutputListener());

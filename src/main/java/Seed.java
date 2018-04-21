@@ -3,10 +3,10 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 
 public class Seed {
 
-    private String seed;
+    public String value;
 
-    public Seed(String seed) {
-        this.seed = seed;
+    public Seed(String value) {
+        this.value = value;
     }
 
     @Override

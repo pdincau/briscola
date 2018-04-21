@@ -1,5 +1,4 @@
 import commands.DrawCard;
-import commands.PlayCard;
 import events.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class OnDrawCardCommand {
 
         handler.handle(new DrawCard(commandId, gameId, playerName));
 
-        verify(eventStore).appendToStream(eq(gameId), anyListOf(Event.class), eq(version+21));
+        verify(eventStore).appendToStream(eq(gameId), anyListOf(Event.class), eq(version+22));
     }
 
     private EventStream streamForGameAfterAPlayedTurn() {
@@ -61,6 +60,7 @@ public class OnDrawCardCommand {
         Event event20 = new CardPlayed(gameId, "Player 2", "Bastoni", "1");
         Event event21 = new CardPlayed(gameId, "Player 3", "Coppe", "1");
         Event event22 = new CardPlayed(gameId, "Player 4", "Spade", "1");
+        Event event23 = new HandCompleted(gameId);
         return EventStream.from(asList(
                 new EventDescriptor(event1, gameId, version),
                 new EventDescriptor(event2, gameId, version+1),
@@ -83,15 +83,14 @@ public class OnDrawCardCommand {
                 new EventDescriptor(event19, gameId, version+18),
                 new EventDescriptor(event20, gameId, version+19),
                 new EventDescriptor(event21, gameId, version+20),
-                new EventDescriptor(event22, gameId, version+21)
+                new EventDescriptor(event22, gameId, version+21),
+                new EventDescriptor(event23, gameId, version+22)
                 ));
     }
 
     private int version = 0;
     private UUID commandId = randomUUID();
     private UUID gameId = randomUUID();
-    private String playerName = "Player 1";
-    private String seed = "Denari";
-    private String value = "1";
+    private String playerName = "Player 4";
 
 }

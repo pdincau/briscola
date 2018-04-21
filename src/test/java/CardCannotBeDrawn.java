@@ -19,7 +19,7 @@ public class CardCannotBeDrawn {
         game.addPlayer(playerName + "2");
         game.addPlayer(playerName + "3");
         game.addPlayer(playerName + "4");
-        game.dealFirstHand();
+        game.dealCards();
         game.playCard(playerName + "1", cardsToPlay.get(0));
         game.playCard(playerName + "2", cardsToPlay.get(1));
         game.playCard(playerName + "3", cardsToPlay.get(2));
@@ -38,7 +38,7 @@ public class CardCannotBeDrawn {
         game.addPlayer(playerName + "2");
         game.addPlayer(playerName + "3");
         game.addPlayer(playerName + "4");
-        game.dealFirstHand();
+        game.dealCards();
         game.playCard(playerName + "1", cardsToPlay.get(0));
         game.playCard(playerName + "2", cardsToPlay.get(1));
         game.playCard(playerName + "3", cardsToPlay.get(2));

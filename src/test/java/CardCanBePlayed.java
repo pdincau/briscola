@@ -16,7 +16,7 @@ public class CardCanBePlayed {
         game.addPlayer(playerName + "2");
         game.addPlayer(playerName + "3");
         game.addPlayer(playerName + "4");
-        game.dealFirstHand();
+        game.dealCards();
 
         Card aCard = firstCardOfFirstPlayer();
         Card anotherCard = firstCardOfSecondPlayer();

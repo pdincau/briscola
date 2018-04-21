@@ -1,13 +1,12 @@
 import events.CardDrawn;
-import events.CardPlayed;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
+import static java.util.UUID.fromString;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
@@ -22,7 +21,7 @@ public class CardCanBeDrawn {
         game.addPlayer(playerName + "2");
         game.addPlayer(playerName + "3");
         game.addPlayer(playerName + "4");
-        game.dealFirstHand();
+        game.dealCards();
         game.playCard(playerName + "1", cardsToPlay.get(0));
         game.playCard(playerName + "2", cardsToPlay.get(1));
         game.playCard(playerName + "3", cardsToPlay.get(2));
@@ -37,7 +36,8 @@ public class CardCanBeDrawn {
                 .contains(tuple(playerName + "1", firstCardDrawn.seed, firstCardDrawn.value));
     }
 
-    private UUID id = randomUUID();
+    private String idThatAllowsPositiveFlowDuringDrawing = "0ce4420b-17f5-477e-b303-e2bf7528ffe4";
+    private UUID id = fromString(idThatAllowsPositiveFlowDuringDrawing);
     private String gameName = "a game name";
     private String playerName = "a player name";
 

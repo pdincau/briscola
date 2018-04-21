@@ -31,7 +31,7 @@ public class BriscolaCommandHandler {
         EventStream stream = eventStore.loadEventStream(command.gameId);
         Game game = Game.from(stream.events());
 
-        game.dealFirstHand();
+        game.dealCards();
         //TODO: maybe we don't need game.getId()
         eventStore.appendToStream(game.getId(), game.changes(), stream.version());
     }

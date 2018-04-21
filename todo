@@ -1,4 +1,3 @@
-table taken
 you cant draw when you are in the last 3 turns
 last hands
 
@@ -6,6 +5,5 @@ solve and remove TODO in code
 review fields name in event
 should i validate everywhere the seed and value of card?
 
-alla fine della pesca rimettiti in gioco
 
-dealcards instead dealfirsthand
+carda deve avere Seed seed?

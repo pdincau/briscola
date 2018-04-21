@@ -10,9 +10,12 @@ public class Game extends AggregateRoot {
     private List<Player> players;
     private Deck deck;
     private Seed seed;
-    private List<Card> table;
+    private Hand hand;
+    private List<Card> cardsWonByFirstTeam;
+    private List<Card> cardsWonBySecondTeam;
     private Integer playersWhoPlayedInThisTurn;
     private Integer playersWhoDrawInThisTurn;
+    private Player playerWinningTurn;
 
 
     public static Game from(List<Event> events) {
@@ -40,7 +43,7 @@ public class Game extends AggregateRoot {
         applyChange(new PlayerJoined(id, playerName));
     }
 
-    public void dealFirstHand() {
+    public void dealCards() {
         for(Player player: players) {
             List<Card> cards = deck.select(3);
             for(Card card: cards) {
@@ -55,7 +58,7 @@ public class Game extends AggregateRoot {
 
     public void playCard(String playerName, Card card) {
         applyChange(new CardPlayed(id, playerName, card.seed, card.value));
-        if (table.size() == 4) {
+        if (hand.isCompleted()) {
             applyChange(new HandCompleted(id));
         }
     }
@@ -65,18 +68,13 @@ public class Game extends AggregateRoot {
         applyChange(new CardDrawn(id, playerName, drawnCard.seed, drawnCard.value));
     }
 
-    private void apply(HandCompleted event) {
-        //capire chi a vinto e dargli le carte
-        // va salvato nelle carte giocate anche chi la ha giocata
-        //Player winningHandPlayer = winningPlayerInHand();
-    }
-
     private void apply(GameCreated event) {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
-        table = new ArrayList<>();
         deck = Deck.shuffleWithSeed(id.hashCode());
+        cardsWonByFirstTeam = new ArrayList<>();
+        cardsWonBySecondTeam = new ArrayList<>();
         playersWhoDrawInThisTurn = 0;
         playersWhoPlayedInThisTurn = 0;
     }
@@ -101,6 +99,7 @@ public class Game extends AggregateRoot {
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
+        hand = new Hand(seed);
         firstPlayer().startPlayingTurn();
     }
 
@@ -112,7 +111,7 @@ public class Game extends AggregateRoot {
         Card card = new Card(event.seed, event.value);
         validateHasCard(player, card);
         player.removeFromHand(card);
-        table.add(card);
+        hand.record(player, card);
         updatePlayingTurn(player);
     }
 
@@ -127,12 +126,20 @@ public class Game extends AggregateRoot {
         updateDrawingTurn(player);
     }
 
+    private void apply(HandCompleted event) {
+        //TODO: quando tutte le carte sono giocate devi pubblicare negli eventi i punti (come faccio con le carte?)
+        playerWinningTurn = playerWithName(hand.turnWinnerName());
+        giveWonCardToTeamOfPlayer(playerWinningTurn);
+        hand = hand.removeTakenCards();
+        playersWhoDrawInThisTurn = 0;
+        playersWhoPlayedInThisTurn = 0;
+        playerWinningTurn.startDrawingTurn();
+    }
+
     private void updatePlayingTurn(Player player) {
         playersWhoPlayedInThisTurn++;
         player.endPlayingTurn();
-        if (playersWhoPlayedInThisTurn == 4) {
-            firstPlayer().startDrawingTurn();
-        } else {
+        if (playersWhoPlayedInThisTurn < 4) {
             Player nextPlayer = playerAfter(player);
             nextPlayer.startPlayingTurn();
         }
@@ -141,17 +148,12 @@ public class Game extends AggregateRoot {
     private void updateDrawingTurn(Player player) {
         playersWhoPlayedInThisTurn++;
         player.endDrawingTurn();
-        if (playersWhoDrawInThisTurn == 4) {
+        if (allPlayerDrew()) {
             firstPlayer().startPlayingTurn();
         } else {
             Player nextPlayer = playerAfter(player);
             nextPlayer.startDrawingTurn();
         }
-    }
-
-    private Player playerAfter(Player player) {
-        int position = players.indexOf(player);
-        return players.get((position % 3) + 1);
     }
 
     private void validateNumberOfPlayers() {
@@ -204,6 +206,21 @@ public class Game extends AggregateRoot {
 
     private Player firstPlayer() {
         return players.get(0);
+    }
+
+    private boolean allPlayerDrew() {
+        return playersWhoDrawInThisTurn == 4;
+    }
+
+
+    private Player playerAfter(Player player) {
+        int position = players.indexOf(player);
+        return players.get((position % 3) + 1);
+    }
+
+    private void giveWonCardToTeamOfPlayer(Player player) {
+        //TODO: capire a che team appartiene il player
+        cardsWonByFirstTeam.addAll(hand.playedCards());
     }
 
     public UUID getId() {
