@@ -7,8 +7,8 @@ public class Hand {
     private List<Card> whatPlayed;
     private Seed briscolaSeed;
 
-    public Hand(Seed seed) {
-        this.briscolaSeed = seed;
+    public Hand(Seed briscolaSeed) {
+        this.briscolaSeed = briscolaSeed;
         this.whoPlayed = new ArrayList<>();
         this.whatPlayed = new ArrayList<>();
     }
@@ -27,43 +27,13 @@ public class Hand {
     }
 
     public String turnWinnerName() {
-        Card winningCard = whatPlayed.stream().reduce((card1, card2) -> strongerCardAccordingToSeed(card1, card2)).get();
+        Card winningCard = whatPlayed.stream().reduce((card1, card2) -> CardEvaluator.winningCard(card1, card2, briscolaSeed)).get();
         int positionInHand = whatPlayed.indexOf(winningCard);
         Player playerWhoWonTurn = whoPlayed.get(positionInHand);
         return playerWhoWonTurn.name;
     }
 
-    private Card strongerCardAccordingToSeed(Card firstCard, Card secondCard) {
-        if (firstCard.hasSameSeedOf(secondCard)) {
-            if (firstCard.isAce()) {
-                return firstCard;
-            }
-            if (secondCard.isAce()) {
-                return secondCard;
-            }
-            if (firstCard.isThree()) {
-                return firstCard;
-            }
-            if (secondCard.isThree()) {
-                return secondCard;
-            }
-            return firstCard.hasValueHigherOf(secondCard) ? firstCard : secondCard;
-        } else {
-            if (isBriscola(firstCard)) {
-                return firstCard;
-            }
-            if (isBriscola(secondCard)) {
-                return secondCard;
-            }
-        }
-        return firstCard;
-    }
-
     public Hand removeTakenCards() {
         return new Hand(briscolaSeed);
-    }
-
-    private boolean isBriscola(Card firstCard) {
-        return firstCard.hasSeed(briscolaSeed);
     }
 }
