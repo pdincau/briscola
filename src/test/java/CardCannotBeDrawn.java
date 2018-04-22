@@ -13,6 +13,7 @@ public class CardCannotBeDrawn {
 
     @Test
     public void by_player_during_another_player_turn() {
+        //TODO: this test is flaky
         Game game = new Game(id, gameName);
         List<Card> cardsToPlay = cardsToPlay();
         game.addPlayer(playerName + "1");

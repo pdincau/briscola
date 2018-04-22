@@ -5,6 +5,7 @@ import java.util.*;
 
 public class Game extends AggregateRoot {
 
+    public static final int NUMBER_OF_PLAYERS_IN_GAME = 4;
     private UUID id;
     private String name;
     private List<Player> players;
@@ -139,7 +140,7 @@ public class Game extends AggregateRoot {
     private void updatePlayingTurn(Player player) {
         playersWhoPlayedInThisTurn++;
         player.endPlayingTurn();
-        if (playersWhoPlayedInThisTurn < 4) {
+        if (playersWhoPlayedInThisTurn < NUMBER_OF_PLAYERS_IN_GAME) {
             Player nextPlayer = playerAfter(player);
             nextPlayer.startPlayingTurn();
         }
@@ -157,13 +158,13 @@ public class Game extends AggregateRoot {
     }
 
     private void validateNumberOfPlayers() {
-        if (allPlayersArePresent()) {
+        if (allPlayingSlotsAreTaken()) {
             throw new InvalidOperationException("This game has already 4 players");
         }
     }
 
-    private boolean allPlayersArePresent() {
-        return players.size() >= 4;
+    private boolean allPlayingSlotsAreTaken() {
+        return players.size() >= NUMBER_OF_PLAYERS_IN_GAME;
     }
 
     private Player playerWithName(String name) {
@@ -209,18 +210,29 @@ public class Game extends AggregateRoot {
     }
 
     private boolean allPlayerDrew() {
-        return playersWhoDrawInThisTurn == 4;
+        return playersWhoDrawInThisTurn == NUMBER_OF_PLAYERS_IN_GAME;
     }
 
-
     private Player playerAfter(Player player) {
-        int position = players.indexOf(player);
+        int position = positionInTurnOfPlayer(player);
         return players.get((position % 3) + 1);
     }
 
+    private int positionInTurnOfPlayer(Player player) {
+        return players.indexOf(player);
+    }
+
     private void giveWonCardToTeamOfPlayer(Player player) {
-        //TODO: capire a che team appartiene il player
-        cardsWonByFirstTeam.addAll(hand.playedCards());
+        List<Card> wonCards = hand.playedCards();
+        if (isInFirstTeam(player)) {
+            cardsWonByFirstTeam.addAll(wonCards);
+        } else {
+            cardsWonBySecondTeam.addAll(wonCards);
+        }
+    }
+
+    private boolean isInFirstTeam(Player player) {
+        return positionInTurnOfPlayer(player) % 2 == 0;
     }
 
     public UUID getId() {
