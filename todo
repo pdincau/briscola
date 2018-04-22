@@ -1,3 +1,4 @@
+in which team is winning player?
 you cant draw when you are in the last 3 turns
 last hands
 
@@ -6,4 +7,5 @@ review fields name in event
 should i validate everywhere the seed and value of card?
 
 
-carda deve avere Seed seed?
+carta deve avere Seed seed?
+carta puo avere un metodo su se stesso per capire chi vince?

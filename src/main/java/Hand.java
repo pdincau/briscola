@@ -1,15 +1,14 @@
-import java.util.*;
-
-import static java.lang.Integer.parseInt;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Hand {
 
     private List<Player> whoPlayed;
     private List<Card> whatPlayed;
-    private Seed seed;
+    private Seed briscolaSeed;
 
     public Hand(Seed seed) {
-        this.seed = seed;
+        this.briscolaSeed = seed;
         this.whoPlayed = new ArrayList<>();
         this.whatPlayed = new ArrayList<>();
     }
@@ -28,7 +27,6 @@ public class Hand {
     }
 
     public String turnWinnerName() {
-        //TODO: forse non tiene la carta?
         Card winningCard = whatPlayed.stream().reduce((card1, card2) -> strongerCardAccordingToSeed(card1, card2)).get();
         int positionInHand = whatPlayed.indexOf(winningCard);
         Player playerWhoWonTurn = whoPlayed.get(positionInHand);
@@ -36,25 +34,25 @@ public class Hand {
     }
 
     private Card strongerCardAccordingToSeed(Card firstCard, Card secondCard) {
-        if (firstCard.seed.equals(secondCard.seed)) {
-            if (firstCard.value.equals("1")) {
+        if (firstCard.hasSameSeedOf(secondCard)) {
+            if (firstCard.isAce()) {
                 return firstCard;
             }
-            if (secondCard.value.equals("1")) {
+            if (secondCard.isAce()) {
                 return secondCard;
             }
-            if (firstCard.value.equals("3")) {
+            if (firstCard.isThree()) {
                 return firstCard;
             }
-            if (secondCard.value.equals("3")) {
+            if (secondCard.isThree()) {
                 return secondCard;
             }
-            return (parseInt(firstCard.value) > parseInt(secondCard.value)) ? firstCard : secondCard;
+            return firstCard.hasValueHigherOf(secondCard) ? firstCard : secondCard;
         } else {
-            if (firstCard.seed.equals(seed.value)) {
+            if (isBriscola(firstCard)) {
                 return firstCard;
             }
-            if (secondCard.seed.equals(seed.value)) {
+            if (isBriscola(secondCard)) {
                 return secondCard;
             }
         }
@@ -62,6 +60,10 @@ public class Hand {
     }
 
     public Hand removeTakenCards() {
-        return new Hand(seed);
+        return new Hand(briscolaSeed);
+    }
+
+    private boolean isBriscola(Card firstCard) {
+        return firstCard.hasSeed(briscolaSeed);
     }
 }
