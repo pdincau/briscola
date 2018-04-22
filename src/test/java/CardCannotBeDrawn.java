@@ -13,7 +13,6 @@ public class CardCannotBeDrawn {
 
     @Test
     public void by_player_during_another_player_turn() {
-        //TODO: this test is flaky
         Game game = new Game(id, gameName);
         List<Card> cardsToPlay = cardsToPlay();
         game.addPlayer(playerName + "1");
@@ -58,8 +57,7 @@ public class CardCannotBeDrawn {
         return cardsToPlay;
     }
 
-    private UUID id = randomUUID();
+    private UUID id = UUID.fromString("0ce4420b-17f5-477e-b303-e2bf7528ffe4");
     private String gameName = "a game name";
     private String playerName = "a player name";
-    private Card anotherCard = new Card("Bastoni", "1");
 }
