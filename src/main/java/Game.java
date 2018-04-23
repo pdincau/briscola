@@ -15,7 +15,7 @@ public class Game extends AggregateRoot {
     private List<Card> cardsWonByFirstTeam;
     private List<Card> cardsWonBySecondTeam;
     private Integer playersWhoPlayedInThisTurn;
-    private Integer playersWhoDrawInThisTurn;
+    private Integer playersWhoDrewInThisTurn;
     private Player playerWinningTurn;
 
 
@@ -76,7 +76,7 @@ public class Game extends AggregateRoot {
         deck = Deck.shuffleWithSeed(id.hashCode());
         cardsWonByFirstTeam = new ArrayList<>();
         cardsWonBySecondTeam = new ArrayList<>();
-        playersWhoDrawInThisTurn = 0;
+        playersWhoDrewInThisTurn = 0;
         playersWhoPlayedInThisTurn = 0;
     }
 
@@ -100,7 +100,7 @@ public class Game extends AggregateRoot {
     private void apply(BriscolaSelected event) {
         seed = new Seed(event.seed);
         deck = deck.moveFirstToLast();
-        hand = new Hand(seed);
+        hand = new Hand(seed, 0);
         firstPlayer().startPlayingTurn();
     }
 
@@ -131,10 +131,13 @@ public class Game extends AggregateRoot {
         //TODO: quando tutte le carte sono giocate devi pubblicare negli eventi i punti (come faccio con le carte?)
         playerWinningTurn = playerWithName(hand.turnWinnerName());
         giveWonCardToTeamOfPlayer(playerWinningTurn);
-        hand = hand.removeTakenCards();
-        playersWhoDrawInThisTurn = 0;
+        hand = hand.next();
         playersWhoPlayedInThisTurn = 0;
-        playerWinningTurn.startDrawingTurn();
+        if (hand.isOneOfLastThree()) {
+            playerWinningTurn.startPlayingTurn();
+        } else {
+            playerWinningTurn.startDrawingTurn();
+        }
     }
 
     private void updatePlayingTurn(Player player) {
@@ -147,10 +150,11 @@ public class Game extends AggregateRoot {
     }
 
     private void updateDrawingTurn(Player player) {
-        playersWhoPlayedInThisTurn++;
+        playersWhoDrewInThisTurn++;
         player.endDrawingTurn();
         if (allPlayerDrew()) {
-            firstPlayer().startPlayingTurn();
+            playersWhoDrewInThisTurn = 0;
+            playerWinningTurn.startPlayingTurn();
         } else {
             Player nextPlayer = playerAfter(player);
             nextPlayer.startDrawingTurn();
@@ -210,12 +214,16 @@ public class Game extends AggregateRoot {
     }
 
     private boolean allPlayerDrew() {
-        return playersWhoDrawInThisTurn == NUMBER_OF_PLAYERS_IN_GAME;
+        return playersWhoDrewInThisTurn == NUMBER_OF_PLAYERS_IN_GAME;
     }
 
     private Player playerAfter(Player player) {
         int position = positionInTurnOfPlayer(player);
-        return players.get((position % 3) + 1);
+        if (position == 3) {
+            return firstPlayer();
+        } else {
+            return players.get(position + 1);
+        }
     }
 
     private int positionInTurnOfPlayer(Player player) {

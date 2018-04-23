@@ -6,9 +6,11 @@ public class Hand {
     private List<Player> whoPlayed;
     private List<Card> whatPlayed;
     private Seed briscolaSeed;
+    private int number;
 
-    public Hand(Seed briscolaSeed) {
+    public Hand(Seed briscolaSeed, int number) {
         this.briscolaSeed = briscolaSeed;
+        this.number = number;
         this.whoPlayed = new ArrayList<>();
         this.whatPlayed = new ArrayList<>();
     }
@@ -33,7 +35,11 @@ public class Hand {
         return playerWhoWonTurn.name;
     }
 
-    public Hand removeTakenCards() {
-        return new Hand(briscolaSeed);
+    public Boolean isOneOfLastThree() {
+        return number > 7;
+    }
+
+    public Hand next() {
+        return new Hand(briscolaSeed, number+1);
     }
 }
