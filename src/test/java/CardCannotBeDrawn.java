@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
-import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 public class CardCannotBeDrawn {
