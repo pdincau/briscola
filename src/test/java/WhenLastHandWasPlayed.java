@@ -24,5 +24,5 @@ public class WhenLastHandWasPlayed {
         verify(commandSender).send(isA(CloseGame.class));
     }
 
-    private static final int LAST_HAND_TURN_NUMBER = 10;
+    private static final int LAST_HAND_TURN_NUMBER = 9;
 }
