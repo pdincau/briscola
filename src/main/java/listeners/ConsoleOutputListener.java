@@ -1,3 +1,5 @@
+package listeners;
+
 import com.google.common.eventbus.Subscribe;
 import events.*;
 
@@ -31,5 +33,10 @@ public class ConsoleOutputListener {
     @Subscribe
     public void consume(CardDrawn event) {
         System.out.println("Player " + event.name + " drew card: (" + event.value + " " + event.seed + ")");
+    }
+
+    @Subscribe
+    public void consume(GameClosed event) {
+        System.out.println("Game " + event.id + " closed");
     }
 }

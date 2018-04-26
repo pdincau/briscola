@@ -36,7 +36,11 @@ public class Hand {
     }
 
     public Boolean isOneOfLastThree() {
-        return number > 7;
+        return number > 7 && number <= 9;
+    }
+
+    public int number() {
+        return number;
     }
 
     public Hand next() {

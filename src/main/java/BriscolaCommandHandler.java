@@ -55,5 +55,15 @@ public class BriscolaCommandHandler {
         //TODO: maybe we don't need game.getId()
         eventStore.appendToStream(game.getId(), game.changes(), stream.version());
     }
+
+    @Subscribe
+    public void handle(CloseGame command) {
+        EventStream stream = eventStore.loadEventStream(command.gameId);
+        Game game = Game.from(stream.events());
+
+        game.close();
+        //TODO: maybe we don't need game.getId()
+        eventStore.appendToStream(game.getId(), game.changes(), stream.version());
+    }
 }
 

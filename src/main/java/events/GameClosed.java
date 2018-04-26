@@ -1,22 +1,20 @@
 package events;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import java.util.UUID;
 
-import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
 
-public class HandCompleted extends Event {
+public class GameClosed extends Event {
 
-    public final int number;
-
-    public HandCompleted(UUID id, int number) {
+    public GameClosed(UUID id) {
         super(id);
-        this.number = number;
     }
 
     @Override
     public boolean equals(Object obj) {
-        return reflectionEquals(this, obj);
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 
     @Override

@@ -2,6 +2,7 @@ import commands.AddPlayer;
 import commands.CreateGame;
 import commands.DrawCard;
 import commands.PlayCard;
+import listeners.ConsoleOutputListener;
 
 import java.util.UUID;
 
@@ -18,6 +19,9 @@ public class BriscolaGame {
 
         FirstHandDealer firstHandDealer = new FirstHandDealer(commandBus);
         publisher.register(firstHandDealer);
+
+        GameCloser gameCloser = new GameCloser(commandBus);
+        publisher.register(gameCloser);
 
         commandBus.send(new CreateGame(randomUUID(), gameId, "A Guided Game"));
 

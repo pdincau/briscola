@@ -60,7 +60,7 @@ public class OnDrawCardCommand {
         Event event20 = new CardPlayed(gameId, "Player 2", "Bastoni", "1");
         Event event21 = new CardPlayed(gameId, "Player 3", "Coppe", "1");
         Event event22 = new CardPlayed(gameId, "Player 4", "Spade", "1");
-        Event event23 = new HandCompleted(gameId);
+        Event event23 = new HandCompleted(gameId,1);
         return EventStream.from(asList(
                 new EventDescriptor(event1, gameId, version),
                 new EventDescriptor(event2, gameId, version+1),

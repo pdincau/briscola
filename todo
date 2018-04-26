@@ -1,9 +1,15 @@
 test you can play without drawing when you are in the last 3 turns (unit) it's red now
+test that game is closed
+test game can be closed only after last hand
+
+quando tutte le carte sono giocate devi pubblicare negli eventi i punti (come faccio con le carte?)
+
 
 solve and remove TODO in code
 review fields name in event
 should i validate everywhere the seed and value of card?
 
-
 carta deve avere Seed seed?
 carta puo avere un metodo su se stesso per capire chi vince?
+
+seed -> suit

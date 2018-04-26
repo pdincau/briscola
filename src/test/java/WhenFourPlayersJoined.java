@@ -18,7 +18,7 @@ public class WhenFourPlayersJoined {
     private CommandSender commandSender;
 
     @Test
-    public void its_time_to_deal_cards() {
+    public void it_is_time_to_deal_cards() {
         FirstHandDealer dealer = new FirstHandDealer(commandSender);
 
         dealer.consume(new PlayerJoined(gameId, "player 1"));

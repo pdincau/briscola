@@ -38,6 +38,7 @@ public class Game extends AggregateRoot {
         register(CardPlayed.class, this::apply);
         register(CardDrawn.class, this::apply);
         register(HandCompleted.class, this::apply);
+        register(GameClosed.class, this::apply);
     }
 
     public void addPlayer(String playerName) {
@@ -60,13 +61,18 @@ public class Game extends AggregateRoot {
     public void playCard(String playerName, Card card) {
         applyChange(new CardPlayed(id, playerName, card.seed, card.value));
         if (hand.isCompleted()) {
-            applyChange(new HandCompleted(id));
+            applyChange(new HandCompleted(id, hand.number()));
         }
     }
 
     public void drawCard(String playerName) {
         Card drawnCard = deck.select(1).get(0);
         applyChange(new CardDrawn(id, playerName, drawnCard.seed, drawnCard.value));
+    }
+
+
+    public void close() {
+        applyChange(new GameClosed(id));
     }
 
     private void apply(GameCreated event) {
@@ -128,7 +134,6 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(HandCompleted event) {
-        //TODO: quando tutte le carte sono giocate devi pubblicare negli eventi i punti (come faccio con le carte?)
         playerWinningTurn = playerWithName(hand.turnWinnerName());
         giveWonCardToTeamOfPlayer(playerWinningTurn);
         hand = hand.next();
@@ -138,6 +143,10 @@ public class Game extends AggregateRoot {
         } else {
             playerWinningTurn.startDrawingTurn();
         }
+    }
+
+    private void apply(GameClosed event) {
+        playerWinningTurn.endPlayingTurn();
     }
 
     private void updatePlayingTurn(Player player) {
