@@ -11,12 +11,11 @@ public class Game extends AggregateRoot {
     private List<Player> players;
     private Deck deck;
     private Hand hand;
-    private List<Card> cardsWonByFirstTeam;
-    private List<Card> cardsWonBySecondTeam;
+    private WonCards firstTeamTake;
+    private WonCards secondTeamTake;
+    private Player playerWinningTurn;
     private Integer playersWhoPlayedInThisTurn;
     private Integer playersWhoDrewInThisTurn;
-    private Player playerWinningTurn;
-
 
     public static Game from(List<Event> events) {
         Game game = new Game();
@@ -69,7 +68,6 @@ public class Game extends AggregateRoot {
         applyChange(new CardDrawn(id, playerName, drawnCard.suit, drawnCard.value));
     }
 
-
     public void close() {
         applyChange(new GameClosed(id));
     }
@@ -78,9 +76,9 @@ public class Game extends AggregateRoot {
         id = event.id;
         name = event.name;
         players = new ArrayList<>();
+        firstTeamTake = WonCards.none();
+        secondTeamTake = WonCards.none();
         deck = Deck.shuffleWithSeed(id.hashCode());
-        cardsWonByFirstTeam = new ArrayList<>();
-        cardsWonBySecondTeam = new ArrayList<>();
         playersWhoDrewInThisTurn = 0;
         playersWhoPlayedInThisTurn = 0;
     }
@@ -238,11 +236,11 @@ public class Game extends AggregateRoot {
     }
 
     private void giveWonCardToTeamOfPlayer(Player player) {
-        List<Card> wonCards = hand.playedCards();
+        List<Card> cardsPlayedDuringHand = hand.playedCards();
         if (isInFirstTeam(player)) {
-            cardsWonByFirstTeam.addAll(wonCards);
+            firstTeamTake.add(cardsPlayedDuringHand);
         } else {
-            cardsWonBySecondTeam.addAll(wonCards);
+            secondTeamTake.add(cardsPlayedDuringHand);
         }
     }
 
