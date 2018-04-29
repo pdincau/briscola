@@ -1,4 +1,4 @@
-import events.Event;
+package events;
 
 import java.util.UUID;
 

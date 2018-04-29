@@ -1,5 +1,6 @@
 import com.google.common.eventbus.Subscribe;
 import commands.*;
+import events.EventStream;
 
 public class BriscolaCommandHandler {
 

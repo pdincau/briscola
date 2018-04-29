@@ -1,5 +1,7 @@
 import commands.AddPlayer;
 import events.Event;
+import events.EventDescriptor;
+import events.EventStream;
 import events.GameCreated;
 import org.junit.Before;
 import org.junit.Test;

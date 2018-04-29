@@ -1,4 +1,5 @@
 import events.Event;
+import events.EventStream;
 
 import java.util.List;
 import java.util.UUID;

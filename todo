@@ -11,5 +11,3 @@ should i validate everywhere the suit and value of card?
 
 carta deve avere Suit suit?
 carta puo avere un metodo su se stesso per capire chi vince?
-
-suit -> suit

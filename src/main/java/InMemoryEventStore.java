@@ -1,4 +1,6 @@
 import events.Event;
+import events.EventDescriptor;
+import events.EventStream;
 import exceptions.ConcurrencyException;
 
 import java.util.*;

@@ -1,7 +1,5 @@
 import commands.DealFirstHand;
-import events.Event;
-import events.GameCreated;
-import events.PlayerJoined;
+import events.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
