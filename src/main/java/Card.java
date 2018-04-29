@@ -4,20 +4,20 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 
 public class Card {
 
-    public final String seed; //TODO: use Seed
+    public final String suit; //TODO: use Suit?
     public final String value;
 
-    public Card(String seed, String value) {
-        this.seed = seed;
+    public Card(String suit, String value) {
+        this.suit = suit;
         this.value = value;
     }
 
-    public boolean hasSameSeedOf(Card card) {
-        return seed.equals(card.seed);
+    public boolean hasSameSuitOf(Card card) {
+        return suit.equals(card.suit);
     }
 
-    public boolean hasSeed(Seed seed) {
-        return this.seed.equals(seed.value);
+    public boolean hasSuit(Suit suit) {
+        return this.suit.equals(suit.value);
     }
 
     public boolean isThree() {

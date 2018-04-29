@@ -44,12 +44,12 @@ public class Deck {
 
     private static List<Card> generateCards() {
         List<Card> cards = new ArrayList<>();
-        List<String> seeds = asList("Denari", "Spade", "Bastoni", "Coppe");
+        List<String> suits = asList("Denari", "Spade", "Bastoni", "Coppe");
         List<String> values = asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
 
-        for (String seed: seeds) {
+        for (String suit : suits) {
             for (String value: values) {
-                cards.add(new Card(seed, value));
+                cards.add(new Card(suit, value));
             }
         }
         return cards;

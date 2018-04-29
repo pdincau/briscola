@@ -8,13 +8,13 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 public class CardDealt extends Event {
 
     public final String name;
-    public final String seed;
+    public final String suit;
     public final String value;
 
-    public CardDealt(UUID id, String name, String seed, String value) {
+    public CardDealt(UUID id, String name, String suit, String value) {
         super(id);
         this.name = name;
-        this.seed = seed;
+        this.suit = suit;
         this.value = value;
     }
 

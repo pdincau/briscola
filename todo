@@ -7,9 +7,9 @@ quando tutte le carte sono giocate devi pubblicare negli eventi i punti (come fa
 
 solve and remove TODO in code
 review fields name in event
-should i validate everywhere the seed and value of card?
+should i validate everywhere the suit and value of card?
 
-carta deve avere Seed seed?
+carta deve avere Suit suit?
 carta puo avere un metodo su se stesso per capire chi vince?
 
-seed -> suit
+suit -> suit

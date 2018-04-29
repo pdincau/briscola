@@ -10,7 +10,7 @@ public class Game extends AggregateRoot {
     private String name;
     private List<Player> players;
     private Deck deck;
-    private Seed seed;
+    private Suit suit;
     private Hand hand;
     private List<Card> cardsWonByFirstTeam;
     private List<Card> cardsWonBySecondTeam;
@@ -49,17 +49,17 @@ public class Game extends AggregateRoot {
         for(Player player: players) {
             List<Card> cards = deck.select(3);
             for(Card card: cards) {
-                CardDealt event = new CardDealt(id, player.name, card.seed, card.value);
+                CardDealt event = new CardDealt(id, player.name, card.suit, card.value);
                 applyChange(event);
             }
         }
         Card briscola = deck.select(1).get(0);
-        BriscolaSelected event = new BriscolaSelected(id, briscola.seed, briscola.value);
+        BriscolaSelected event = new BriscolaSelected(id, briscola.suit, briscola.value);
         applyChange(event);
     }
 
     public void playCard(String playerName, Card card) {
-        applyChange(new CardPlayed(id, playerName, card.seed, card.value));
+        applyChange(new CardPlayed(id, playerName, card.suit, card.value));
         if (hand.isCompleted()) {
             applyChange(new HandCompleted(id, hand.number()));
         }
@@ -67,7 +67,7 @@ public class Game extends AggregateRoot {
 
     public void drawCard(String playerName) {
         Card drawnCard = deck.select(1).get(0);
-        applyChange(new CardDrawn(id, playerName, drawnCard.seed, drawnCard.value));
+        applyChange(new CardDrawn(id, playerName, drawnCard.suit, drawnCard.value));
     }
 
 
@@ -95,7 +95,7 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(CardDealt event) {
-        Card card = new Card(event.seed, event.value);
+        Card card = new Card(event.suit, event.value);
         String playerName = event.name;
         validateExistsPlayerWithName(playerName);
         Player player = playerWithName(playerName);
@@ -104,9 +104,9 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(BriscolaSelected event) {
-        seed = new Seed(event.seed);
+        suit = new Suit(event.suit);
         deck = deck.moveFirstToLast();
-        hand = new Hand(seed, 0);
+        hand = new Hand(suit, 0);
         firstPlayer().startPlayingTurn();
     }
 
@@ -115,7 +115,7 @@ public class Game extends AggregateRoot {
         validateExistsPlayerWithName(playerName);
         Player player = playerWithName(playerName);
         validateIsPlayingTurnOf(player);
-        Card card = new Card(event.seed, event.value);
+        Card card = new Card(event.suit, event.value);
         validateHasCard(player, card);
         player.removeFromHand(card);
         hand.record(player, card);
@@ -127,7 +127,7 @@ public class Game extends AggregateRoot {
         validateExistsPlayerWithName(playerName);
         Player player = playerWithName(playerName);
         validateIsDrawingTurnOf(player);
-        Card card = new Card(event.seed, event.value);
+        Card card = new Card(event.suit, event.value);
         player.receive(card);
         deck = deck.remove(card);
         updateDrawingTurn(player);

@@ -1,11 +1,11 @@
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCode;
 
-public class Seed {
+public class Suit {
 
     public String value;
 
-    public Seed(String value) {
+    public Suit(String value) {
         this.value = value;
     }
 

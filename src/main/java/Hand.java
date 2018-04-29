@@ -5,11 +5,11 @@ public class Hand {
 
     private List<Player> whoPlayed;
     private List<Card> whatPlayed;
-    private Seed briscolaSeed;
+    private Suit briscolaSuit;
     private int number;
 
-    public Hand(Seed briscolaSeed, int number) {
-        this.briscolaSeed = briscolaSeed;
+    public Hand(Suit briscolaSuit, int number) {
+        this.briscolaSuit = briscolaSuit;
         this.number = number;
         this.whoPlayed = new ArrayList<>();
         this.whatPlayed = new ArrayList<>();
@@ -29,7 +29,7 @@ public class Hand {
     }
 
     public String turnWinnerName() {
-        Card winningCard = whatPlayed.stream().reduce((card1, card2) -> CardEvaluator.winningCard(card1, card2, briscolaSeed)).get();
+        Card winningCard = whatPlayed.stream().reduce((card1, card2) -> CardEvaluator.winningCard(card1, card2, briscolaSuit)).get();
         int positionInHand = whatPlayed.indexOf(winningCard);
         Player playerWhoWonTurn = whoPlayed.get(positionInHand);
         return playerWhoWonTurn.name;
@@ -44,6 +44,6 @@ public class Hand {
     }
 
     public Hand next() {
-        return new Hand(briscolaSeed, number+1);
+        return new Hand(briscolaSuit, number+1);
     }
 }

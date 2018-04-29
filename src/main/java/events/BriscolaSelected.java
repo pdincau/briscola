@@ -7,12 +7,12 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 
 public class BriscolaSelected extends Event {
 
-    public final String seed;
+    public final String suit;
     public final String value;
 
-    public BriscolaSelected(UUID id, String seed, String value) {
+    public BriscolaSelected(UUID id, String suit, String value) {
         super(id);
-        this.seed = seed;
+        this.suit = suit;
         this.value = value;
     }
 

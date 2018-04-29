@@ -26,9 +26,9 @@ public class CardCanBePlayed {
 
         assertThat(game.changes())
                 .filteredOn("class", CardPlayed.class)
-                .extracting("name", "seed", "value")
-                .contains(tuple(playerName + "1", aCard.seed, aCard.value),
-                          tuple(playerName + "2", anotherCard.seed, anotherCard.value)
+                .extracting("name", "suit", "value")
+                .contains(tuple(playerName + "1", aCard.suit, aCard.value),
+                          tuple(playerName + "2", anotherCard.suit, anotherCard.value)
                 );
     }
 

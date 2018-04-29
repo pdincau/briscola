@@ -32,7 +32,7 @@ public class OnPlayCardCommand {
     public void a_card_is_played() {
         when(eventStore.loadEventStream(gameId)).thenReturn(streamForGameWith4Players());
 
-        handler.handle(new PlayCard(commandId, gameId, playerName, seed, value));
+        handler.handle(new PlayCard(commandId, gameId, playerName, suit, value));
 
         verify(eventStore).appendToStream(eq(gameId), anyListOf(Event.class), eq(version+17));
     }
@@ -82,7 +82,7 @@ public class OnPlayCardCommand {
     private UUID commandId = randomUUID();
     private UUID gameId = randomUUID();
     private String playerName = "Player 1";
-    private String seed = "Denari";
+    private String suit = "Denari";
     private String value = "1";
 
 }

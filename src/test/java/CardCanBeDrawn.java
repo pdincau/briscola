@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static java.util.UUID.fromString;
-import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.groups.Tuple.tuple;
 
@@ -32,8 +31,8 @@ public class CardCanBeDrawn {
 
         assertThat(game.changes())
                 .filteredOn("class", CardDrawn.class)
-                .extracting("name", "seed", "value")
-                .contains(tuple(playerName + "1", firstCardDrawn.seed, firstCardDrawn.value));
+                .extracting("name", "suit", "value")
+                .contains(tuple(playerName + "1", firstCardDrawn.suit, firstCardDrawn.value));
     }
 
     private String idThatAllowsPositiveFlowDuringDrawing = "0ce4420b-17f5-477e-b303-e2bf7528ffe4";

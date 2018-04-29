@@ -1,7 +1,7 @@
 public class CardEvaluator {
 
-    public static Card winningCard(Card firstCard, Card secondCard, Seed briscolaSeed) {
-        if (firstCard.hasSameSeedOf(secondCard)) {
+    public static Card winningCard(Card firstCard, Card secondCard, Suit briscolaSuit) {
+        if (firstCard.hasSameSuitOf(secondCard)) {
             if (firstCard.isAce()) {
                 return firstCard;
             }
@@ -16,10 +16,10 @@ public class CardEvaluator {
             }
             return firstCard.hasValueHigherOf(secondCard) ? firstCard : secondCard;
         } else {
-            if (firstCard.hasSeed(briscolaSeed)) {
+            if (firstCard.hasSuit(briscolaSuit)) {
                 return firstCard;
             }
-            if (secondCard.hasSeed(briscolaSeed)) {
+            if (secondCard.hasSuit(briscolaSuit)) {
                 return secondCard;
             }
         }
