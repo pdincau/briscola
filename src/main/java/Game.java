@@ -5,12 +5,11 @@ import java.util.*;
 
 public class Game extends AggregateRoot {
 
-    public static final int NUMBER_OF_PLAYERS_IN_GAME = 4;
+    private static final int NUMBER_OF_PLAYERS_IN_GAME = 4;
     private UUID id;
     private String name;
     private List<Player> players;
     private Deck deck;
-    private Suit suit;
     private Hand hand;
     private List<Card> cardsWonByFirstTeam;
     private List<Card> cardsWonBySecondTeam;
@@ -104,9 +103,8 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(BriscolaSelected event) {
-        suit = new Suit(event.suit);
         deck = deck.moveFirstToLast();
-        hand = new Hand(suit, 0);
+        hand = new Hand(new Suit(event.suit), 0);
         firstPlayer().startPlayingTurn();
     }
 

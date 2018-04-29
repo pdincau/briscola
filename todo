@@ -9,5 +9,5 @@ solve and remove TODO in code
 review fields name in event
 should i validate everywhere the suit and value of card?
 
-carta deve avere Suit suit?
+carta deve avere domain.Suit suit?
 carta puo avere un metodo su se stesso per capire chi vince?

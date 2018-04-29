@@ -2,6 +2,7 @@ package events;
 
 import java.util.List;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.toList;
 
 public class EventStream {
@@ -28,7 +29,7 @@ public class EventStream {
     }
 
     public List<Event> events() {
-        return events;
+        return unmodifiableList(events);
     }
 
     public int version() {
