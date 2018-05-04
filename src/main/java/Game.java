@@ -40,6 +40,8 @@ public class Game extends AggregateRoot {
     }
 
     public void addPlayer(String playerName) {
+        validateIsNewPlayer(new Player(playerName));
+        validateNumberOfPlayers();
         applyChange(new PlayerJoined(id, playerName));
     }
 
@@ -51,12 +53,14 @@ public class Game extends AggregateRoot {
                 applyChange(event);
             }
         }
-        Card briscola = deck.select(1).get(0);
-        BriscolaSelected event = new BriscolaSelected(id, briscola.suit, briscola.value);
-        applyChange(event);
+        showBriscola();
     }
 
     public void playCard(String playerName, Card card) {
+        validateExistsPlayerWithName(playerName);
+        Player player = playerWithName(playerName);
+        validateIsPlayingTurnOf(player);
+        validateHasCard(player, card);
         applyChange(new CardPlayed(id, playerName, card.suit, card.value));
         if (hand.isCompleted()) {
             applyChange(new HandCompleted(id, hand.number()));
@@ -64,12 +68,20 @@ public class Game extends AggregateRoot {
     }
 
     public void drawCard(String playerName) {
+        validateExistsPlayerWithName(playerName);
+        validateIsDrawingTurnOf(playerWithName(playerName));
         Card drawnCard = deck.select(1).get(0);
         applyChange(new CardDrawn(id, playerName, drawnCard.suit, drawnCard.value));
     }
 
     public void close() {
         applyChange(new GameClosed(id));
+    }
+
+    private void showBriscola() {
+        Card briscola = deck.select(1).get(0);
+        BriscolaSelected event = new BriscolaSelected(id, briscola.suit, briscola.value);
+        applyChange(event);
     }
 
     private void apply(GameCreated event) {
@@ -84,18 +96,13 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(PlayerJoined event) {
-        String playerName = event.name;
-        Player candidatePlayer = new Player(playerName);
-        validateIsNewPlayer(candidatePlayer);
-        validateNumberOfPlayers();
-        players.add(candidatePlayer);
+        Player player = new Player(event.name);
+        players.add(player);
     }
 
     private void apply(CardDealt event) {
         Card card = new Card(event.suit, event.value);
-        String playerName = event.name;
-        validateExistsPlayerWithName(playerName);
-        Player player = playerWithName(playerName);
+        Player player = playerWithName(event.name);
         player.receive(card);
         deck = deck.remove(card);
     }
@@ -107,23 +114,16 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(CardPlayed event) {
-        String playerName = event.name;
-        validateExistsPlayerWithName(playerName);
-        Player player = playerWithName(playerName);
-        validateIsPlayingTurnOf(player);
         Card card = new Card(event.suit, event.value);
-        validateHasCard(player, card);
+        Player player = playerWithName(event.name);
         player.removeFromHand(card);
         hand.record(player, card);
         updatePlayingTurn(player);
     }
 
     private void apply(CardDrawn event) {
-        String playerName = event.name;
-        validateExistsPlayerWithName(playerName);
-        Player player = playerWithName(playerName);
-        validateIsDrawingTurnOf(player);
         Card card = new Card(event.suit, event.value);
+        Player player = playerWithName(event.name);
         player.receive(card);
         deck = deck.remove(card);
         updateDrawingTurn(player);
@@ -131,7 +131,7 @@ public class Game extends AggregateRoot {
 
     private void apply(HandCompleted event) {
         playerWinningTurn = playerWithName(hand.turnWinnerName());
-        giveWonCardToTeamOfPlayer(playerWinningTurn);
+        giveWonCardsToTeamOfPlayer(playerWinningTurn);
         hand = hand.next();
         playersWhoPlayedInThisTurn = 0;
         if (hand.isOneOfLastThree()) {
@@ -235,7 +235,7 @@ public class Game extends AggregateRoot {
         return players.indexOf(player);
     }
 
-    private void giveWonCardToTeamOfPlayer(Player player) {
+    private void giveWonCardsToTeamOfPlayer(Player player) {
         List<Card> cardsPlayedDuringHand = hand.playedCards();
         if (isInFirstTeam(player)) {
             firstTeamTake.add(cardsPlayedDuringHand);
