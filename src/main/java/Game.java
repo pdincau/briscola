@@ -53,7 +53,9 @@ public class Game extends AggregateRoot {
                 applyChange(event);
             }
         }
-        showBriscola();
+        Card briscola = deck.select(1).get(0);
+        BriscolaSelected event = new BriscolaSelected(id, briscola.suit, briscola.value);
+        applyChange(event);
     }
 
     public void playCard(String playerName, Card card) {
@@ -76,12 +78,6 @@ public class Game extends AggregateRoot {
 
     public void close() {
         applyChange(new GameClosed(id));
-    }
-
-    private void showBriscola() {
-        Card briscola = deck.select(1).get(0);
-        BriscolaSelected event = new BriscolaSelected(id, briscola.suit, briscola.value);
-        applyChange(event);
     }
 
     private void apply(GameCreated event) {
