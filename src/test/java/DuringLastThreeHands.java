@@ -8,7 +8,7 @@ public class DuringLastThreeHands {
     @Test
     @Ignore
     public void players_do_not_draw() {
-        fail("yessa");
+        fail("to be implemented");
     }
 
 }
