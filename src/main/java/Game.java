@@ -77,7 +77,7 @@ public class Game extends AggregateRoot {
     }
 
     public void close() {
-        applyChange(new GameClosed(id));
+        applyChange(new GameClosed(id, name));
     }
 
     private void apply(GameCreated event) {

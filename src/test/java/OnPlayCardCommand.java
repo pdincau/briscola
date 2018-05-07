@@ -1,6 +1,5 @@
 import commands.PlayCard;
 import events.*;
-import helpers.EventStreams;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.UUID;
 
-import static helpers.EventStreams.streamForGameWith4Players;
+import static helpers.EventStreams.streamForGameWith4PlayersBeforeFirstCardIsPlayed;
 import static java.util.UUID.randomUUID;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
@@ -31,7 +30,7 @@ public class OnPlayCardCommand {
 
     @Test
     public void a_card_is_played() {
-        EventStream eventStream = streamForGameWith4Players(gameId);
+        EventStream eventStream = streamForGameWith4PlayersBeforeFirstCardIsPlayed(gameId);
         when(eventStore.loadEventStream(gameId)).thenReturn(eventStream);
 
         handler.handle(new PlayCard(commandId, gameId, playerName, suit, value));

@@ -8,8 +8,11 @@ import static org.apache.commons.lang3.builder.HashCodeBuilder.reflectionHashCod
 
 public class GameClosed extends Event {
 
-    public GameClosed(UUID id) {
+    public final String name;
+
+    public GameClosed(UUID id, String name) {
         super(id);
+        this.name = name;
     }
 
     @Override

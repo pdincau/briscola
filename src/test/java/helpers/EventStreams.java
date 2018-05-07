@@ -67,6 +67,23 @@ public class EventStreams {
         Event event3 = new PlayerJoined(gameId, "Player 2");
         Event event4 = new PlayerJoined(gameId, "Player 3");
         Event event5 = new PlayerJoined(gameId, "Player 4");
+
+        return EventStream.from(asList(
+                new EventDescriptor(event1, gameId, version),
+                new EventDescriptor(event2, gameId, version+1),
+                new EventDescriptor(event3, gameId, version+2),
+                new EventDescriptor(event4, gameId, version+3),
+                new EventDescriptor(event5, gameId, version+4)
+        ));
+    }
+
+    public static EventStream streamForGameWith4PlayersBeforeFirstCardIsPlayed(UUID gameId) {
+        int version = 0;
+        Event event1 = new GameCreated(gameId, "a game");
+        Event event2 = new PlayerJoined(gameId, "Player 1");
+        Event event3 = new PlayerJoined(gameId, "Player 2");
+        Event event4 = new PlayerJoined(gameId, "Player 3");
+        Event event5 = new PlayerJoined(gameId, "Player 4");
         Event event6 = new CardDealt(gameId, "Player 1", "Denari", "1");
         Event event7 = new CardDealt(gameId, "Player 1", "Denari", "2");
         Event event8 = new CardDealt(gameId, "Player 1", "Denari", "3");
