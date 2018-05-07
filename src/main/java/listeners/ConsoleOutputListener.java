@@ -37,6 +37,6 @@ public class ConsoleOutputListener {
 
     @Subscribe
     public void consume(GameClosed event) {
-        System.out.println("Game " + event.id + " closed");
+        System.out.println("Game " + event.name + " closed");
     }
 }
