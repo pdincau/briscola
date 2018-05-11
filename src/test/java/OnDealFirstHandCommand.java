@@ -41,6 +41,5 @@ public class OnDealFirstHandCommand {
     private int version = 0;
     private UUID commandId = randomUUID();
     private UUID gameId = randomUUID();
-    private String gameName = "a game name";
 
 }
