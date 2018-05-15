@@ -35,7 +35,7 @@ public class Hand {
         return playerWhoWonTurn.name;
     }
 
-    public Boolean isOneOfLastThree() {
+    public Boolean isOneOfLastThreeHands() {
         return number > 7 && number <= 9;
     }
 
@@ -43,7 +43,11 @@ public class Hand {
         return number;
     }
 
-    public Hand next() {
-        return new Hand(briscolaSuit, number+1);
+    public static Hand nextAfter(Hand hand) {
+        return new Hand(hand.briscolaSuit, hand.number+1);
+    }
+
+    public static Hand goesAt(String suit) {
+        return new Hand(new Suit(suit), 0);
     }
 }

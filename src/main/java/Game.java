@@ -10,7 +10,7 @@ public class Game extends AggregateRoot {
     private String name;
     private List<Player> players;
     private Deck deck;
-    private Hand hand;
+    private Hand thisHand;
     private WonCards firstTeamTake;
     private WonCards secondTeamTake;
     private Player playerWinningTurn;
@@ -64,8 +64,8 @@ public class Game extends AggregateRoot {
         validateIsPlayingTurnOf(player);
         validateHasCard(player, card);
         applyChange(new CardPlayed(id, playerName, card.suit, card.value));
-        if (hand.isCompleted()) {
-            applyChange(new HandCompleted(id, hand.number()));
+        if (thisHand.isCompleted()) {
+            applyChange(new HandCompleted(id, thisHand.number()));
         }
     }
 
@@ -105,7 +105,7 @@ public class Game extends AggregateRoot {
 
     private void apply(BriscolaSelected event) {
         deck = deck.moveFirstToLast();
-        hand = new Hand(new Suit(event.suit), 0);
+        thisHand = Hand.goesAt(event.suit);
         firstPlayer().startPlayingTurn();
     }
 
@@ -113,7 +113,7 @@ public class Game extends AggregateRoot {
         Card card = new Card(event.suit, event.value);
         Player player = playerWithName(event.name);
         player.removeFromHand(card);
-        hand.record(player, card);
+        thisHand.record(player, card);
         updatePlayingTurn(player);
     }
 
@@ -126,11 +126,11 @@ public class Game extends AggregateRoot {
     }
 
     private void apply(HandCompleted event) {
-        playerWinningTurn = playerWithName(hand.turnWinnerName());
+        playerWinningTurn = playerWithName(thisHand.turnWinnerName());
         giveWonCardsToTeamOfPlayer(playerWinningTurn);
-        hand = hand.next();
+        thisHand = Hand.nextAfter(thisHand);
         playersWhoPlayedInThisTurn = 0;
-        if (hand.isOneOfLastThree()) {
+        if (thisHand.isOneOfLastThreeHands()) {
             playerWinningTurn.startPlayingTurn();
         } else {
             playerWinningTurn.startDrawingTurn();
@@ -206,7 +206,7 @@ public class Game extends AggregateRoot {
 
     private void validateHasCard(Player player, Card card) {
         if (!player.hasInHand(card)) {
-            throw new InvalidOperationException("Player can't play a card not in her hand");
+            throw new InvalidOperationException("Player can't play a card not in their hand");
         }
     }
 
@@ -232,7 +232,7 @@ public class Game extends AggregateRoot {
     }
 
     private void giveWonCardsToTeamOfPlayer(Player player) {
-        List<Card> cardsPlayedDuringHand = hand.playedCards();
+        List<Card> cardsPlayedDuringHand = thisHand.playedCards();
         if (isInFirstTeam(player)) {
             firstTeamTake.add(cardsPlayedDuringHand);
         } else {
