@@ -54,7 +54,7 @@ public class InMemoryEventStore implements EventStore {
     }
 
     private boolean conflictExists(int expectedVersion, List<EventDescriptor> eventDescriptors) {
-        return eventDescriptors.get(eventDescriptors.size() - 1).version != expectedVersion && expectedVersion != -1;
+        return eventDescriptors.get(eventDescriptors.size() - 1).version != expectedVersion && expectedVersion != APPEND_ANYWAY;
     }
 
 }
