@@ -14,7 +14,7 @@ public class BriscolaCommandHandler {
     public void handle(CreateGame command) {
         Game game = new Game(command.gameId, command.gameName);
 
-        eventStore.appendToStream(game.getId(), game.changes(), -1);
+        eventStore.appendToStream(game.getId(), game.changes(), EventStore.APPEND_ANYWAY);
     }
 
     @Subscribe

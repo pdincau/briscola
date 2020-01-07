@@ -39,7 +39,7 @@ public class CardCannotBePlayed {
 
         assertThatExceptionOfType(InvalidOperationException.class)
                 .isThrownBy(() -> game.playCard(playerName + "1", firstCardOfSecondPlayer))
-                .withMessage("Player can't play a card not in her hand");
+                .withMessage("Player can't play a card not in their hand");
     }
 
     @Test
